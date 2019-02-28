@@ -31,4 +31,4 @@ n()
 }
 
 [ -f ~/.fzf.bash ] && source ~/.fzf.bash
-alias config='/usr/bin/git --git-dir=/home/centos/.cfg/ --work-tree=/home/centos'
+alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME/centos'
