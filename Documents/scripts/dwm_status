@@ -1,0 +1,13 @@
+#!/bin/bash
+
+print_date(){
+	# print_date "+%a %m-%d %T%:::z"
+	date "+%A %d-%m %I:%M:%S"
+}
+
+while true;
+do
+	xsetroot -name "$(print_date)"
+
+	sleep 5
+done
