@@ -19,19 +19,40 @@ Plug 'junegunn/goyo.vim'
 Plug 'dylanaraps/fff.vim' 
 Plug 'vimwiki/vimwiki' 
 Plug 'mcchrish/nnn.vim'
+Plug 'scwood/vim-hybrid'
+
+Plug 'joshdick/onedark.vim'
 
 call plug#end()
 
+" set showtabline=2
+set encoding=utf-8
+" set termguicolors
+" set term=xterm-256color
 set t_Co=256
 syntax enable
-let g:airline_theme='ayu_mirage'
+" let g:airline_theme='ayu_mirage'
 " let g:airline_theme='base16_atelierdune'
 " au VimEnter * AirlineToggle
 set relativenumber
 set backspace=2
+set mouse=a
+colorscheme hybrid
+set background=dark
+au VimEnter * set laststatus=0
 
 if has('gui_running')
+	python3 from powerline.vim import setup as powerline_setup
+	python3 powerline_setup()
+	python3 del powerline_setup
+
         set guifont=Consolas\ for\ Powerline\ 13
+        " set guifont=Consolas\ with\ Powerline\ 13
+        " set guifont=Consolas\ 13
+        " set guifont=Consolas\ Regular\ 13
+        " set guifont=Literation\ Mono\ Nerd\ Font\ Complete\ Mono\ 13
+        " set guifont=Inconsolata\ Regular\ 13
+        " set guifont=Liberation\ Mono\ for\ Powerline\ Regular\ 13
 	set background=dark
 	colorscheme chito
 	set noerrorbells
@@ -48,16 +69,23 @@ if has('gui_running')
 	set ignorecase
 	set smartcase
 
-	" air-line
+	au VimEnter * set laststatus=2
+	set showcmd
+	set showtabline=2
 	let g:airline_powerline_fonts = 1
-        if !exists('g:airline_symbols')
-	    let g:airline_symbols = {}
-	endif
-	let g:airline_theme='base16_spacemacs'
+	" let g:airline_theme='base16_spacemacs'
 	let g:airline#extensions#tabline#enabled = 1
-	let g:airline#extensions#tabline#show_buffers = 0
+	let g:airline#extensions#tabline#show_buffers = 1
 	let g:airline#extensions#tabline#show_close_button = 0
+
+        " let g:airline_symbols.space = "\ua0"
+	let g:Powerline_symbols = 'unicode'
+	let g:pymcd_powerline="py3"
+	let g:Powerline_symbols = 'fancy'
+
 endif
+
+au VimEnter * AirlineToggle
 
 au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 
@@ -70,3 +98,10 @@ let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown'
 
 nnoremap ; :
 nnoremap <leader>h :tabnew<CR>:help<CR><C-w><C-w>:quit<CR>
+
+" nnoremap <C-n> :bnext<CR>
+" nnoremap <C-p> :bprevious<CR>
+nnoremap <C-PageUp> :bnext<CR>
+nnoremap <C-PageDown> :bprevious<CR>
+set shiftwidth=2
+set tabstop=2
