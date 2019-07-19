@@ -35,7 +35,7 @@ settings:
   content.geolocation:
     global: false
   content.pdfjs:
-    global: true
+    global: false
   fonts.completion.category:
     global: bold 10pt Liberation Mono
   fonts.completion.entry:
@@ -71,7 +71,7 @@ settings:
   qt.args:
     global: null
   qt.force_software_rendering:
-    global: qt-quick
+    global: none
   scrolling.bar:
     global: always
   scrolling.smooth:

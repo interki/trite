@@ -35,6 +35,7 @@ syntax enable
 " let g:airline_theme='base16_atelierdune'
 " au VimEnter * AirlineToggle
 set relativenumber
+set wildmenu
 set backspace=2
 set mouse=a
 colorscheme hybrid
@@ -105,3 +106,4 @@ nnoremap <C-PageUp> :bnext<CR>
 nnoremap <C-PageDown> :bprevious<CR>
 set shiftwidth=2
 set tabstop=2
+set so=5
