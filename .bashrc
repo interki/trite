@@ -10,6 +10,7 @@ fi
 
 # User specific aliases and functions
 alias c=clear
+alias ls="ls --color=auto"
 alias ll="ls -lah --color"
 alias l="ls -a --color"
 alias feh="feh --scale-down --auto-zoom --auto-rotate"
