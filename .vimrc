@@ -34,6 +34,7 @@ syntax enable
 " let g:airline_theme='ayu_mirage'
 " let g:airline_theme='base16_atelierdune'
 " au VimEnter * AirlineToggle
+set hidden
 set relativenumber
 set wildmenu
 set backspace=2
@@ -83,6 +84,8 @@ if has('gui_running')
 	let g:Powerline_symbols = 'unicode'
 	let g:pymcd_powerline="py3"
 	let g:Powerline_symbols = 'fancy'
+
+	" let g:loaded_airline = 1
 
 endif
 
