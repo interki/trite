@@ -6,7 +6,8 @@
  * font: see http://freedesktop.org/software/fontconfig/fontconfig-user.html
  */
 static char *font = "Liberation Mono:pixelsize=16:antialias=true:autohint=true";
-// static char *font = "xos4 Terminus:pixelsize=20:antialias=true:autohint=true";
+// static char *font = "Iosevka:pixelsize=17:style=bold";
+// static char *font = "Inconsolata:pixelsize=18:style=bold";
 static int borderpx = 2;
 
 /*
@@ -70,29 +71,74 @@ char *termname = "st-256color";
 static const char *colorname[] = {
 
   /* 8 normal colors */
-  [0] = "#2b303b", /* black   */
-  [1] = "#bf616a", /* red     */
-  [2] = "#a3be8c", /* green   */
-  [3] = "#ebcb8b", /* yellow  */
-  [4] = "#8fa1b3", /* blue    */
-  [5] = "#b48ead", /* magenta */
-  [6] = "#96b5b4", /* cyan    */
-  [7] = "#c0c5ce", /* white   */
+  [0] = "#282a2e", /* black   */
+  [1] = "#a54242", /* red     */
+  [2] = "#8c9440", /* green   */
+  [3] = "#de935f", /* yellow  */
+  [4] = "#5f819d", /* blue    */
+  [5] = "#85678f", /* magenta */
+  [6] = "#5e8d87", /* cyan    */
+  [7] = "#707880", /* white   */
 
   /* 8 bright colors */
-  [8]  = "#65737e", /* black   */
-  [9]  = "#bf616a", /* red     */
-  [10] = "#a3be8c", /* green   */
-  [11] = "#ebcb8b", /* yellow  */
-  [12] = "#8fa1b3", /* blue    */
-  [13] = "#b48ead", /* magenta */
-  [14] = "#96b5b4", /* cyan    */
-  [15] = "#eff1f5", /* white   */
+  [8]  = "#373b41", /* black   */
+  [9]  = "#cc6666", /* red     */
+  [10] = "#b5bd68", /* green   */
+  [11] = "#f0c674", /* yellow  */
+  [12] = "#81a2be", /* blue    */
+  [13] = "#b294bb", /* magenta */
+  [14] = "#8abeb7", /* cyan    */
+  [15] = "#c5c8c6", /* white   */
 
   /* special colors */
-  [256] = "#2b303b", /* background */
-  [257] = "#c0c5ce", /* foreground */
+  [256] = "#1d1f21", /* background */
+  [257] = "#c5c8c6", /* foreground */
 };
+
+/*
+ * Default colors (colorname index)
+ * foreground, background, cursor
+ */
+// static unsigned int defaultfg = 257;
+// static unsigned int defaultbg = 256;
+// static unsigned int defaultcs = 257;
+
+/*
+ * Colors used, when the specific fg == defaultfg. So in reverse mode this
+ * will reverse too. Another logic would only make the simple feature too
+ * complex.
+ */
+// static unsigned int defaultitalic = 7;
+// static unsigned int defaultunderline = 7;
+
+
+// /* Terminal colors (16 first used in escape sequence) */
+// static const char *colorname[] = {
+//
+//   /* 8 normal colors */
+//   [0] = "#2b303b", /* black   */
+//   [1] = "#bf616a", /* red     */
+//   [2] = "#a3be8c", /* green   */
+//   [3] = "#ebcb8b", /* yellow  */
+//   [4] = "#8fa1b3", /* blue    */
+//   [5] = "#b48ead", /* magenta */
+//   [6] = "#96b5b4", /* cyan    */
+//   [7] = "#c0c5ce", /* white   */
+//
+//   /* 8 bright colors */
+//   [8]  = "#65737e", /* black   */
+//   [9]  = "#bf616a", /* red     */
+//   [10] = "#a3be8c", /* green   */
+//   [11] = "#ebcb8b", /* yellow  */
+//   [12] = "#8fa1b3", /* blue    */
+//   [13] = "#b48ead", /* magenta */
+//   [14] = "#96b5b4", /* cyan    */
+//   [15] = "#eff1f5", /* white   */
+//
+//   /* special colors */
+//   [256] = "#2b303b", /* background */
+//   [257] = "#c0c5ce", /* foreground */
+// };
 
 /*
  * Default colors (colorname index)
