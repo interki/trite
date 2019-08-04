@@ -70,6 +70,9 @@ if has('gui_running')
 	set showcmd
 	set ignorecase
 	set smartcase
+	set tw=140
+	set wrap linebreak nolist
+	let g:goyo_width = 140
 
 	au VimEnter * set laststatus=2
 	set showcmd
