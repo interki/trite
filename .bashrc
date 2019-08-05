@@ -33,10 +33,11 @@ n()
         fi
 }
 
-[ -f ~/.fzf.bash ] && source ~/.fzf.bash
+[ -f /usr/share/fzf/key-bindings.bash ] && source /usr/share/fzf/key-bindings.bash
+[ -f /usr/share/fzf/completion.bash ] && source /usr/share/fzf/completion.bash
+
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 
 # PS1='>>> '
 # PS1='\u \w $(git branch 2>/dev/null | sed -n "s/* \(.*\)/\1 /p")$ '
-# PS1='\[\e[32m>>\] \[\e[36m\w\] \[\e[33m\]\[\e[0m\]'
 PS1='\[\e[36m\]\w \[\e[32m\]>> \[\e[33m\]\[\e[0m\]'
