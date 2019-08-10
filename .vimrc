@@ -10,13 +10,11 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'VundleVim/Vundle.vim'
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'Jimeno0/vim-chito'
 Plug 'tomtom/tcomment_vim' 
 Plug 'junegunn/goyo.vim'
-Plug 'dylanaraps/fff.vim' 
 Plug 'vimwiki/vimwiki' 
 Plug 'mcchrish/nnn.vim'
 Plug 'scwood/vim-hybrid'
@@ -31,17 +29,22 @@ set encoding=utf-8
 " set term=xterm-256color
 set t_Co=256
 syntax enable
-" let g:airline_theme='ayu_mirage'
+colorscheme hybrid
+let g:airline_theme='onedark'
 " let g:airline_theme='base16_atelierdune'
+" let g:airline_theme='ayu_mirage'
 " au VimEnter * AirlineToggle
 set hidden
 set relativenumber
 set wildmenu
+set wrapscan
 set backspace=2
 set mouse=a
-colorscheme hybrid
 set background=dark
 au VimEnter * set laststatus=0
+set shiftwidth=2
+set tabstop=2
+set so=5
 
 if has('gui_running')
 	python3 from powerline.vim import setup as powerline_setup
@@ -77,8 +80,9 @@ if has('gui_running')
 	au VimEnter * set laststatus=2
 	set showcmd
 	set showtabline=2
-	let g:airline_powerline_fonts = 1
+
 	" let g:airline_theme='base16_spacemacs'
+	let g:airline_powerline_fonts = 1
 	let g:airline#extensions#tabline#enabled = 1
 	let g:airline#extensions#tabline#show_buffers = 1
 	let g:airline#extensions#tabline#show_close_button = 0
@@ -99,6 +103,7 @@ au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 " Vim Wiki
 filetype plugin on 
 syntax on
+let g:vimwiki_list = [{'path': '~/OneDrive/Documents/notes/', 'syntax': 'markdown', 'ext': '.md'}]
 let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
 
 " nnoremap <leader>n :NnnPicker '%:p:h'<CR>
@@ -110,6 +115,6 @@ nnoremap <leader>h :tabnew<CR>:help<CR><C-w><C-w>:quit<CR>
 " nnoremap <C-p> :bprevious<CR>
 nnoremap <C-PageUp> :bnext<CR>
 nnoremap <C-PageDown> :bprevious<CR>
-set shiftwidth=2
-set tabstop=2
-set so=5
+
+nmap <s-l> <Plug>VimwikiGoToNextHeader
+nmap <s-h> <Plug>VimwikiGoToPrevHeader
