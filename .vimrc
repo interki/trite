@@ -76,6 +76,7 @@ if has('gui_running')
 	set tw=140
 	set wrap linebreak nolist
 	let g:goyo_width = 140
+	let g:goyo_height = 100
 
 	au VimEnter * set laststatus=2
 	set showcmd
@@ -116,5 +117,7 @@ nnoremap <leader>h :tabnew<CR>:help<CR><C-w><C-w>:quit<CR>
 nnoremap <C-PageUp> :bnext<CR>
 nnoremap <C-PageDown> :bprevious<CR>
 
-nmap <s-l> <Plug>VimwikiGoToNextHeader
-nmap <s-h> <Plug>VimwikiGoToPrevHeader
+" nmap <s-l> <Plug>VimwikiGoToNextHeader
+" nmap <s-h> <Plug>VimwikiGoToPrevHeader
+nmap <C-l> <Plug>VimwikiGoToNextHeader
+nmap <C-h> <Plug>VimwikiGoToPrevHeader
