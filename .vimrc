@@ -51,7 +51,7 @@ if has('gui_running')
 	python3 powerline_setup()
 	python3 del powerline_setup
 
-        set guifont=Consolas\ for\ Powerline\ 13
+	set guifont=Consolas\ for\ Powerline\ 13
         " set guifont=Consolas\ with\ Powerline\ 13
         " set guifont=Consolas\ 13
         " set guifont=Consolas\ Regular\ 13
@@ -110,6 +110,7 @@ let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown'
 " nnoremap <leader>n :NnnPicker '%:p:h'<CR>
 
 nnoremap ; :
+nnoremap : ;
 nnoremap <leader>h :tabnew<CR>:help<CR><C-w><C-w>:quit<CR>
 
 " nnoremap <C-n> :bnext<CR>
@@ -121,3 +122,9 @@ nnoremap <C-PageDown> :bprevious<CR>
 " nmap <s-h> <Plug>VimwikiGoToPrevHeader
 nmap <C-l> <Plug>VimwikiGoToNextHeader
 nmap <C-h> <Plug>VimwikiGoToPrevHeader
+
+let g:netrw_banner = 0
+let g:netrw_liststyle = 3
+let g:netrw_browse_split = 4
+let g:netrw_altv = 1
+let g:netrw_winsize = 20
