@@ -24,15 +24,18 @@ export PATH="$PATH:$HOME/.rvm/bin"
 export EDITOR=vim
 export NNN_TMPFILE="/tmp/nnn"
 export NNN_USE_EDITOR=1
+export NNN_PLUG='o:fzy-open;p:mocplay;d:ndiff;m:nmount;t:thumb'
 
 n()
 {
-        nnn "$@"
+    export NNN_TMPFILE=${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd
 
-        if [ -f $NNN_TMPFILE ]; then
-                . $NNN_TMPFILE
-                rm -f $NNN_TMPFILE > /dev/null
-        fi
+    nnn "$@"
+
+    if [ -f $NNN_TMPFILE ]; then
+            . $NNN_TMPFILE
+            rm -f $NNN_TMPFILE > /dev/null
+    fi
 }
 
 f() {
