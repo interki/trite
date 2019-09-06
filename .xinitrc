@@ -4,4 +4,6 @@ python ~/Documents/scripts/clipz.py &
 onedrive -m &
 clipmenud &
 
+[[ -f ~/.xmodmap ]] && xmodmap ~/.xmodmap
+
 exec /usr/local/bin/dwm
