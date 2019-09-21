@@ -30,7 +30,8 @@ set encoding=utf-8
 set t_Co=256
 syntax enable
 colorscheme hybrid
-let g:airline_theme='onedark'
+" let g:airline_theme='onedark'
+let g:airline_theme='hybrid'
 " let g:airline_theme='base16_atelierdune'
 " let g:airline_theme='ayu_mirage'
 " au VimEnter * AirlineToggle
@@ -122,9 +123,3 @@ nnoremap <C-PageDown> :bprevious<CR>
 " nmap <s-h> <Plug>VimwikiGoToPrevHeader
 nmap <C-l> <Plug>VimwikiGoToNextHeader
 nmap <C-h> <Plug>VimwikiGoToPrevHeader
-
-let g:netrw_banner = 0
-let g:netrw_liststyle = 3
-let g:netrw_browse_split = 4
-let g:netrw_altv = 1
-let g:netrw_winsize = 20
