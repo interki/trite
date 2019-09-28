@@ -1,20 +1,20 @@
 #!/bin/bash
-
-print_bat(){
-	hash acpi || return 0
-	onl="$(grep "on-line" <(acpi -V))"
-	charge="$(awk '{ sum += $1 } END { print sum }' /sys/class/power_supply/BAT*/capacity)"
-	if test -z "$onl"
-	then
-		# suspend when we close the lid
-		#systemctl --user stop inhibit-lid-sleep-on-battery.service
-		echo -e "${charge}"
-	else
-		# On mains! no need to suspend
-		#systemctl --user start inhibit-lid-sleep-on-battery.service
-		echo -e "${charge}"
-	fi
-}
+#
+# print_bat(){
+# 	hash acpi || return 0
+# 	onl="$(grep "on-line" <(acpi -V))"
+# 	charge="$(awk '{ sum += $1 } END { print sum }' /sys/class/power_supply/BAT*/capacity)"
+# 	if test -z "$onl"
+# 	then
+# 		# suspend when we close the lid
+# 		#systemctl --user stop inhibit-lid-sleep-on-battery.service
+# 		echo -e "${charge}"
+# 	else
+# 		# On mains! no need to suspend
+# 		#systemctl --user start inhibit-lid-sleep-on-battery.service
+# 		echo -e "${charge}"
+# 	fi
+# }
 
 print_date(){
 	# print_date "+%a %m-%d %T%:::z"
@@ -23,7 +23,8 @@ print_date(){
 
 while true;
 do
-	xsetroot -name "$(print_bat)% $(print_date)"
+	# xsetroot -name "$(print_bat)% $(print_date)"
+	xsetroot -name "$(print_date)"
 
 	sleep 5
 done
