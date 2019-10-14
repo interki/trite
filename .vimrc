@@ -20,6 +20,8 @@ Plug 'mcchrish/nnn.vim'
 Plug 'scwood/vim-hybrid'
 
 Plug 'joshdick/onedark.vim'
+Plug 'cocopon/iceberg.vim'
+Plug 'arzg/vim-substrata'
 
 call plug#end()
 
@@ -46,6 +48,7 @@ au VimEnter * set laststatus=0
 set shiftwidth=2
 set tabstop=2
 set so=5
+set is
 
 if has('gui_running')
 	python3 from powerline.vim import setup as powerline_setup
@@ -76,6 +79,7 @@ if has('gui_running')
 	set smartcase
 	set tw=140
 	set wrap linebreak nolist
+	set breakindent
 	let g:goyo_width = 140
 	let g:goyo_height = 100
 
