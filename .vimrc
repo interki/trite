@@ -123,6 +123,7 @@ function! ToggleSpellCheck()
 endfunction
 
 nnoremap <silent> <Leader>S :call ToggleSpellCheck()<CR>
+nnoremap <silent> <Leader>D :w !diff % -<CR>
 
 nnoremap ; :
 nnoremap : ;
