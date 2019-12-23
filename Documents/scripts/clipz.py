@@ -19,15 +19,16 @@ while True:
             # mpv --ytdl-format=bestvideo+bestaudio $YOUTUBE_VIDEO_URL
             # run = str("mpv \"--ytdl-format=bestvideo+bestaudio\" {} --no-terminal --osd-level=0".format(recent_value))
             # run = str("mpv \"--ytdl-format=bestvideo[height<=1920]+bestaudio/best[height<=1920]\" {} --no-terminal --osd-level=0".format(recent_value))
+            # run = str("mpv \"--ytdl-format=bestvideo[height<=1920]+bestaudio/best[height<=1920]\" {} --no-terminal --osd-level=0 --cache=99999 ".format(trimmed_value))
             if "&" in recent_value:
                 sep = ("&")
                 # trimmed_value = sep.join(recent_value.split(sep)[:-1])
                 trimmed_value = sep.join(recent_value.split(sep)[:1])
                 print (trimmed_value)
-                run = str("mpv \"--ytdl-format=bestvideo[height<=1920]+bestaudio/best[height<=1920]\" {} --no-terminal --osd-level=0 --cache=99999 ".format(trimmed_value))
+                run = str("mpv \"--ytdl-format=bestvideo[height<=1920]+bestaudio/best[height<=1920]\" {} --no-terminal --osd-level=0".format(trimmed_value))
                 handle = Popen((run), stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
             else:
-                run = str("mpv \"--ytdl-format=bestvideo[height<=1920]+bestaudio/best[height<=1920]\" {} --no-terminal --osd-level=0 --cache=99999 ".format(recent_value))
+                run = str("mpv \"--ytdl-format=bestvideo[height<=1920]+bestaudio/best[height<=1920]\" {} --no-terminal --osd-level=0".format(recent_value))
                 handle = Popen((run), stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
             # link = (str(handle.stdout.read()))
             # print(link)
