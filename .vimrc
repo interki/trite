@@ -106,6 +106,8 @@ au VimEnter * AirlineToggle
 filetype plugin on 
 syntax on
 let g:vimwiki_list = [{'path': '~/OneDrive/Documents/notes/', 'syntax': 'markdown', 'ext': '.md'}]
+"let g:vimwiki_list += [{'path': '~/Documents/d', 'syntax': 'vimwiki'}]
+
 let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
 
 au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
