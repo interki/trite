@@ -54,19 +54,19 @@ settings:
   fonts.completion.entry:
     global: 10pt Liberation Mono
   fonts.debug_console:
-    global: 10pt monospace
+    global: 10pt default_family
+  fonts.default_family:
+    global:
+    - xos4 Terminus
+    - Terminus
   fonts.downloads:
-    global: 10pt monospace
+    global: 10pt default_family
   fonts.hints:
     global: bold 10pt Consolas For Powerline
   fonts.messages.info:
-    global: 10pt monospace
-  fonts.monospace:
-    global: '"xos4 Terminus", Terminus, Monospace, "DejaVu Sans Mono", Monaco, "Bitstream
-      Vera Sans Mono", "Andale Mono", "Courier New", Courier, "Liberation Mono", monospace,
-      Fixed, Consolas, Terminal'
+    global: 10pt default_family
   fonts.prompts:
-    global: 10pt monospace
+    global: 10pt default_family
   fonts.statusbar:
     global: 10pt Consolas For Powerline
   fonts.tabs:
