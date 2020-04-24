@@ -10,10 +10,13 @@ endif
 
 call plug#begin('~/.vim/plugged')
 
-Plug 'vim-airline/vim-airline'
-Plug 'vim-airline/vim-airline-themes'
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdcommenter'
 Plug 'junegunn/goyo.vim'
+Plug 'junegunn/limelight.vim'
+Plug 'junegunn/fzf.vim'
+Plug '/usr/bin/fzf'
 Plug 'vimwiki/vimwiki' 
 Plug 'mcchrish/nnn.vim'
 Plug 'scwood/vim-hybrid'
@@ -23,30 +26,32 @@ Plug 'Jimeno0/vim-chito'
 Plug 'cocopon/iceberg.vim'
 Plug 'arzg/vim-substrata'
 Plug 'arcticicestudio/nord-vim' 
+Plug 'rakr/vim-one'
 
 call plug#end()
 
-" set showtabline=2
 set encoding=utf-8
-" set termguicolors
-" set term=xterm-256color
+"set termguicolors
+"set term=xterm-256color
 set t_Co=256
 syntax enable
 colorscheme hybrid
+set background=dark
 set hidden
 set confirm
 set relativenumber
+set number
 set wildmenu
 set wrapscan
 set backspace=2
 set mouse=a
-set background=dark
 set shiftwidth=2
 set tabstop=2
-set so=5
-set is
+set scrolloff=5
+set incsearch
+set autoindent
 
-au VimEnter * set laststatus=0
+"au VimEnter * set laststatus=0
 
 if has('gui_running')
 	python3 from powerline.vim import setup as powerline_setup
@@ -64,9 +69,10 @@ if has('gui_running')
 	set guioptions-=m 
 	set guioptions-=T
 	set guioptions-=L
+	set guioptions+=d
+	set guioptions-=e
+	set guioptions+=c
 	set wildmode
-	set relativenumber 
-	set number
 	set showcmd
 	set ignorecase
 	set smartcase
@@ -74,33 +80,30 @@ if has('gui_running')
 	set wrap linebreak nolist
 	set breakindent
 
-	function! s:goyo_enter()
-		set relativenumber
-	endfunction
-	autocmd! User GoyoEnter nested call <SID>goyo_enter()
 	let g:goyo_width = 145
 	let g:goyo_height = 100
+	let g:goyo_linenr = 1
 
 	au VimEnter * set laststatus=2
 	set showcmd
 	set showtabline=2
 
-	let g:airline_theme='monochrome'
+	"let g:airline_theme='monochrome'
 
-	let g:airline_powerline_fonts = 1
-	let g:airline#extensions#tabline#enabled = 1
-	let g:airline#extensions#tabline#show_buffers = 1
+	"let g:airline_powerline_fonts = 1
+	"let g:airline#extensions#tabline#enabled = 1
+	"let g:airline#extensions#tabline#show_buffers = 1
+	"let g:Powerline_symbols = 'unicode'
+	"let g:pymcd_powerline="py3"
+	"let g:Powerline_symbols = 'fancy'
+
 	"let g:airline#extensions#tabline#show_close_button = 0
-	let g:Powerline_symbols = 'unicode'
-	let g:pymcd_powerline="py3"
-	let g:Powerline_symbols = 'fancy'
-
 	"let g:loaded_airline = 1
 	"let g:airline_symbols.space = "\ua0"
 
 endif
 
-au VimEnter * AirlineToggle
+"au VimEnter * AirlineToggle
 
 "Vim Wiki
 filetype plugin on 
