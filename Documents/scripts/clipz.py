@@ -19,15 +19,16 @@ while True:
             # mpv --ytdl-format=bestvideo+bestaudio $YOUTUBE_VIDEO_URL
             # run = str("mpv \"--ytdl-format=bestvideo+bestaudio\" {} --no-terminal --osd-level=0".format(recent_value))
             # run = str("mpv \"--ytdl-format=bestvideo[height<=1920]+bestaudio/best[height<=1920]\" {} --no-terminal --osd-level=0".format(recent_value))
+            # run = str("mpv \"--ytdl-format=bestvideo[height<=1920]+bestaudio/best[height<=1920]\" {} --no-terminal --osd-level=0 --cache=99999 ".format(trimmed_value))
             if "&" in recent_value:
                 sep = ("&")
                 # trimmed_value = sep.join(recent_value.split(sep)[:-1])
                 trimmed_value = sep.join(recent_value.split(sep)[:1])
                 print (trimmed_value)
-                run = str("mpv \"--ytdl-format=bestvideo[height<=1920]+bestaudio/best[height<=1920]\" {} --no-terminal --osd-level=0 --cache=99999 ".format(trimmed_value))
+                run = str("mpv \"--ytdl-format=bestvideo[height<=1920]+bestaudio/best[height<=1920]\" {} --no-terminal --osd-level=0 & disown".format(trimmed_value))
                 handle = Popen((run), stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
             else:
-                run = str("mpv \"--ytdl-format=bestvideo[height<=1920]+bestaudio/best[height<=1920]\" {} --no-terminal --osd-level=0 --cache=99999 ".format(recent_value))
+                run = str("mpv \"--ytdl-format=bestvideo[height<=1920]+bestaudio/best[height<=1920]\" {} --no-terminal --osd-level=0 & disown".format(recent_value))
                 handle = Popen((run), stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
             # link = (str(handle.stdout.read()))
             # print(link)
@@ -59,7 +60,8 @@ while True:
             print(link2)
             # run = str("mpv \"{}\" --no-terminal --osd-level=0".format(link))
             # run = str("mpv \"{}\" --no-terminal --osd-level=0 --cache=99999".format(link))
-            run = str("mpv \"{}\" --demuxer-thread=yes and --demuxer-readahead-secs=5000 --no-terminal --osd-level=0".format(link2))
+            # run = str("mpv \"{}\" --demuxer-thread=yes and --demuxer-readahead-secs=5000 --no-terminal --osd-level=0".format(link2))
+            run = str("mpv \"{}\" --no-terminal --osd-level=0 & disown".format(link2))
             handle = Popen((run), stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
         elif "https://www.twitch.tv/" in recent_value:
             print("Twitch Channel Match")
@@ -68,7 +70,7 @@ while True:
             handle = Popen((run), stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
             link = (str(handle.stdout.read()))
             link2 = (link[2:-5])
-            run = str("mpv \"{}\" --no-terminal".format(link2))
+            run = str("mpv \"{}\" --no-terminal & disown".format(link2))
             handle = Popen((run), stdin=PIPE, stderr=PIPE, stdout=PIPE, shell=True)
 
 
