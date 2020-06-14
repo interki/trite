@@ -25,6 +25,7 @@ export EDITOR=vim
 # export NNN_TMPFILE="/tmp/nnn"
 export NNN_USE_EDITOR=1
 export NNN_PLUG='o:fzy-open;p:mocplay;d:ndiff;m:nmount;t:thumb'
+export NNN_BMS='d:~/Documents;c:~/.config/cumulonimbus/offline_episodes/;D:~/Downloads/;o:~/Downloads/open/;O:~/OneDrive/Documents/notes/'
 export NNN_TRASH=1
 
 n()

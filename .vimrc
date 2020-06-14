@@ -50,6 +50,8 @@ set tabstop=2
 set scrolloff=5
 set incsearch
 set autoindent
+set dictionary+=/usr/share/dict/cracklib-small 
+set complete+=k
 
 "au VimEnter * set laststatus=0
 
@@ -60,6 +62,8 @@ if has('gui_running')
 
 	"set guifont=Consolas\ for\ Powerline\ 13
 	set guifont=Consolas\ Regular\ 13
+	"set guifont=Terminus\ (TTF)\ Medium\ 15
+	set guifont=Terminus\ Medium\ 15
 	set background=dark
 	colorscheme onedark
 	set noerrorbells

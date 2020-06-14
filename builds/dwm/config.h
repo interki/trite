@@ -7,16 +7,32 @@ static const int showbar            = 1;        /* 0 means no bar */
 static const int topbar             = 1;        /* 0 means bottom bar */
 // static const char *fonts[]          = { "monospace:size=10" };
 // static const char *fonts[]          = { "xos4 Terminus:pixelsize=16:antialias=true:autohint=true" };
-static const char *fonts[]          = { "Terminus (TTF):pixelsize=16" };
+//static const char *fonts[]          = { "Terminus (TTF):pixelsize=16" };
+static const char *fonts[]          = { "Terminus:pixelsize=16" };
 // static const char dmenufont[]       = "monospace:size=10";
 // static const char dmenufont[]       = "xos4 Terminus:pixelsize=16:antialias=true:autohint=true";
-static const char dmenufont[]       = "Terminus (TTF):pixelsize=16";
+//static const char dmenufont[]       = "Terminus (TTF):pixelsize=16";
+static const char dmenufont[]       = "Terminus:pixelsize=16";
 static const char col_gray1[]       = "#222222";
 static const char col_gray2[]       = "#444444";
 static const char col_gray3[]       = "#bbbbbb";
 static const char col_gray4[]       = "#eeeeee";
-// static const char col_cyan[]        = "#005577";
-static const char col_cyan[]        = "#006666";
+//static const char col_cyan[]        = "#005577";
+//static const char col_cyan[]        = "#006666";
+//static const char col_cyan[]        = "#61555B"; //brown/red
+//static const char col_cyan[]        = "#5b5d57"; //Chrysler Nordic Gray
+//static const char col_cyan[]        = "#686868"; 
+//static const char col_cyan[]        = "#688488"; 
+//static const char col_cyan[]        = "#82898f"; 
+//static const char col_cyan[]        = "#50555e"; 
+//static const char col_cyan[]        = "#5c666f"; 
+//static const char col_cyan[]        = "#5c667a"; 
+//static const char col_cyan[]        = "#6d7587"; 
+//static const char col_cyan[]        = "#8c9dad"; 
+static const char col_cyan[]        = "#7a8891"; 
+//
+//static const char col_cyan[]        = "#D8DFE5";
+//static const char col_cyan[]        = "#cad2e3";
 static const char *colors[][3]      = {
 	/*               fg         bg         border   */
 	[SchemeNorm] = { col_gray3, col_gray1, col_gray2 },
