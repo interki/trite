@@ -29,7 +29,9 @@ static const char col_gray4[]       = "#eeeeee";
 //static const char col_cyan[]        = "#5c667a"; 
 //static const char col_cyan[]        = "#6d7587"; 
 //static const char col_cyan[]        = "#8c9dad"; 
-static const char col_cyan[]        = "#7a8891"; 
+//static const char col_cyan[]        = "#7a8891"; 
+//static const char col_cyan[]        = "#486287"; 
+static const char col_cyan[]        = "#5c6673"; 
 //
 //static const char col_cyan[]        = "#D8DFE5";
 //static const char col_cyan[]        = "#cad2e3";
