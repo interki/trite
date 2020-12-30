@@ -31,7 +31,7 @@ n()
 {
     export NNN_TMPFILE=${XDG_CONFIG_HOME:-$HOME/.config}/nnn/.lastd
 
-    nnn "$@"
+    nnn -C "$@"
 
     if [ -f $NNN_TMPFILE ]; then
             . $NNN_TMPFILE
@@ -52,5 +52,3 @@ alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
 # PS1='>>> '
 # PS1='\u \w $(git branch 2>/dev/null | sed -n "s/* \(.*\)/\1 /p")$ '
 PS1='\[\e[36m\]\w \[\e[32m\]>> \[\e[33m\]\[\e[0m\]'
-
-

@@ -15,8 +15,9 @@ call plug#begin('~/.vim/plugged')
 Plug 'scrooloose/nerdcommenter'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-Plug '/usr/bin/fzf'
+"Plug '/usr/bin/fzf'
 Plug 'vimwiki/vimwiki' 
 Plug 'mcchrish/nnn.vim'
 Plug 'scwood/vim-hybrid'
@@ -50,6 +51,8 @@ set tabstop=2
 set scrolloff=5
 set incsearch
 set autoindent
+set dictionary+=/usr/share/dict/cracklib-small 
+set complete+=k
 
 "au VimEnter * set laststatus=0
 
@@ -59,7 +62,10 @@ if has('gui_running')
 	python3 del powerline_setup
 
 	"set guifont=Consolas\ for\ Powerline\ 13
-	set guifont=Consolas\ Regular\ 13
+	"set guifont=Consolas\ Regular\ 13
+	set guifont=Terminus\ (TTF)\ Medium\ 15
+	"set guifont=Terminus\ Medium\ 15
+
 	set background=dark
 	colorscheme onedark
 	set noerrorbells

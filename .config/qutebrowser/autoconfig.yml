@@ -19,13 +19,18 @@ settings:
     global: webengine
   bindings.commands:
     global:
+      command:
+        <Escape>: leave-mode
+        <Return>: command-accept
       normal:
         <Alt+j>: repeat 2 scroll down
         <Alt+k>: repeat 2 scroll up
         <Ctrl+j>: scroll-px 0 100
         <Ctrl+k>: scroll-px 0 -100
         W: hint links spawn mpv --ontop --loop --geometry=100%:0% {hint-url}
-        xx: config-cycle statusbar.hide ;; config-cycle tabs.show always switching
+        gt: spawn --userscript tab-show.sh
+        xx: config-cycle statusbar.show always in-mode ;; config-cycle tabs.show always
+          switching
   colors.completion.even.bg:
     global: '#585858'
   confirm_quit:
@@ -44,23 +49,30 @@ settings:
   fonts.completion.entry:
     global: 10pt Liberation Mono
   fonts.debug_console:
-    global: 10pt default_family
+    global: default_size default_family
   fonts.default_family:
     global:
+    - Noto Sans
     - xos4 Terminus
     - Terminus
   fonts.downloads:
-    global: 10pt default_family
+    global: default_size default_family
   fonts.hints:
-    global: bold 10pt Consolas For Powerline
+    global: bold default_size default_family
+  fonts.messages.error:
+    global: default_size default_family
   fonts.messages.info:
-    global: 10pt default_family
+    global: default_size default_family
+  fonts.messages.warning:
+    global: default_size default_family
   fonts.prompts:
-    global: 10pt default_family
+    global: default_size default_family
   fonts.statusbar:
-    global: 10pt Consolas For Powerline
-  fonts.tabs:
-    global: 10pt Consolas For Powerline
+    global: default_size default_family
+  fonts.tabs.selected:
+    global: default_size default_family
+  fonts.tabs.unselected:
+    global: default_size default_family
   fonts.web.family.cursive:
     global: null
   fonts.web.family.fixed:
@@ -87,14 +99,16 @@ settings:
     global: null
   session.lazy_restore:
     global: true
-  statusbar.hide:
-    global: false
+  statusbar.show:
+    global: always
   tabs.position:
     global: top
   tabs.select_on_remove:
     global: prev
   tabs.show:
     global: always
+  tabs.show_switching_delay:
+    global: 10000
   url.searchengines:
     global:
       DEFAULT: https://duckduckgo.com/?q={}
