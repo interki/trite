@@ -33,11 +33,17 @@ settings:
           switching
   colors.completion.even.bg:
     global: '#585858'
+  colors.webpage.darkmode.enabled:
+    global: false
   confirm_quit:
     global:
     - never
   content.autoplay:
     global: true
+  content.blocking.enabled:
+    global: true
+  content.blocking.method:
+    global: auto
   content.cookies.accept:
     global: no-3rdparty
   content.geolocation:
