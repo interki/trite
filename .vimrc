@@ -28,16 +28,18 @@ Plug 'cocopon/iceberg.vim'
 Plug 'arzg/vim-substrata'
 Plug 'arcticicestudio/nord-vim' 
 Plug 'rakr/vim-one'
+Plug 'https://gitlab.com/yorickpeterse/vim-paper.git'
 
 call plug#end()
 
 set encoding=utf-8
-"set termguicolors
-"set term=xterm-256color
+set term=xterm-256color
 set t_Co=256
+set termguicolors
+
 syntax enable
 colorscheme hybrid
-set background=dark
+set background=light
 set hidden
 set confirm
 set relativenumber
@@ -55,7 +57,7 @@ set dictionary+=/usr/share/dict/cracklib-small
 set complete+=k
 
 "au VimEnter * set laststatus=0
-
+"
 if has('gui_running')
 	python3 from powerline.vim import setup as powerline_setup
 	python3 powerline_setup()

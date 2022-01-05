@@ -19,14 +19,18 @@ settings:
     global: webengine
   bindings.commands:
     global:
+      command:
+        <Escape>: mode-leave
+        <Return>: command-accept
       normal:
+        '''<Escape>'',': '''mode-leave'' mode=''command'''
         <Alt+j>: repeat 2 scroll down
         <Alt+k>: repeat 2 scroll up
         <Ctrl+j>: scroll-px 0 100
         <Ctrl+k>: scroll-px 0 -100
         <Escape>: clear-keychain ;; search ;; fullscreen --leave
         W: hint links spawn mpv --ontop --loop --geometry=100%:0% {hint-url}
-        gt: spawn --userscript tab-show.sh
+        gt: set-cmd-text -s :tab-select
         xx: config-cycle statusbar.show always in-mode ;; config-cycle tabs.show always
           switching
   colors.completion.even.bg:
@@ -48,6 +52,8 @@ settings:
     global: false
   content.pdfjs:
     global: false
+  content.prefers_reduced_motion:
+    global: true
   fonts.completion.category:
     global: bold 10pt Liberation Mono
   fonts.completion.entry:
