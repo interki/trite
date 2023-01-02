@@ -22,6 +22,7 @@ Plug 'vimwiki/vimwiki'
 Plug 'mcchrish/nnn.vim'
 Plug 'scwood/vim-hybrid'
 Plug 'joshdick/onedark.vim'
+Plug 'wfxr/minimap.vim'
 
 Plug 'Jimeno0/vim-chito'
 Plug 'cocopon/iceberg.vim'
@@ -55,6 +56,10 @@ set incsearch
 set autoindent
 set dictionary+=/usr/share/dict/cracklib-small 
 set complete+=k
+set tw=80
+setl fo=aw2tq  
+set ignorecase
+set smartcase
 
 "au VimEnter * set laststatus=0
 "
@@ -136,7 +141,7 @@ function! ToggleSpellCheck()
   endif
 endfunction
 nnoremap <silent> <Leader>S :call ToggleSpellCheck()<CR>
-
+nnoremap <silent> <Leader>b :Buffers<CR>
 nnoremap <silent> <Leader>D :w !diff % -<CR>
 nnoremap ; :
 nnoremap : ;

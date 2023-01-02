@@ -7,12 +7,12 @@ fifo="$QUTE_FIFO"
 
 case "$1" in
 	0)
-		echo "bind --mode command <Escape> leave-mode" >> $fifo
+		echo "bind --mode command <Escape> mode-leave" >> $fifo
 		echo "bind --mode command <Return> command-accept" >> $fifo
 		;;
 	*)
-		echo "set-cmd-text -s :buffer ;; set tabs.show always" >> $fifo
-		echo "bind --mode command <Escape> leave-mode ;; set tabs.show switching ;; spawn --userscript $(basename "$0") 0" >> $fifo
-		echo "bind --mode command <Return> command-accept ;; set tabs.show switching ;; spawn --userscript $(basename "$0") 0" >> $fifo
+		echo "set-cmd-text -s :buffer ;; set tabs.show always ;; set statusbar.show always" >> $fifo
+		echo "bind --mode command <Escape> mode-leave ;; set tabs.show switching ;; set statusbar.show in-mode ;; spawn --userscript $(basename "$0") 0" >> $fifo
+		echo "bind --mode command <Return> command-accept ;; set tabs.show switching ;; set statusbar.show in-mode ;; spawn --userscript $(basename "$0") 0" >> $fifo
 		;;
 esac
