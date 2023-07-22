@@ -22,14 +22,17 @@ Plug 'vimwiki/vimwiki'
 Plug 'mcchrish/nnn.vim'
 Plug 'scwood/vim-hybrid'
 Plug 'joshdick/onedark.vim'
-Plug 'wfxr/minimap.vim'
 
+Plug 'wfxr/minimap.vim'
 Plug 'Jimeno0/vim-chito'
 Plug 'cocopon/iceberg.vim'
 Plug 'arzg/vim-substrata'
 Plug 'arcticicestudio/nord-vim' 
 Plug 'rakr/vim-one'
 Plug 'https://gitlab.com/yorickpeterse/vim-paper.git'
+Plug 'https://github.com/preservim/vim-pencil'
+Plug 'https://github.com/chrisbra/recover.vim'
+
 
 call plug#end()
 
@@ -55,12 +58,15 @@ set scrolloff=5
 set incsearch
 set autoindent
 set dictionary+=/usr/share/dict/cracklib-small 
+set thesaurus+=/home/think/.vim/thesaurus/mthesaur.txt
 set complete+=k
-set tw=80
-setl fo=aw2tq  
 set ignorecase
 set smartcase
 
+set tw=80
+set fo=aw2tq  
+"set formatoptions+=a
+ 
 "au VimEnter * set laststatus=0
 "
 if has('gui_running')
@@ -140,6 +146,7 @@ function! ToggleSpellCheck()
     echo "Spellcheck OFF"
   endif
 endfunction
+
 nnoremap <silent> <Leader>S :call ToggleSpellCheck()<CR>
 nnoremap <silent> <Leader>b :Buffers<CR>
 nnoremap <silent> <Leader>D :w !diff % -<CR>
