@@ -3,6 +3,7 @@
 python ~/Documents/scripts/clipz.py &
 onedrive -m &
 clipmenud &
+xset s off -dpms
 #xrandr --output LVDS-1 --off
 ~/.local/share/tresorit/tresorit-cli start &
 
