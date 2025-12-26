@@ -23,7 +23,7 @@ Plug 'mcchrish/nnn.vim'
 Plug 'scwood/vim-hybrid'
 Plug 'joshdick/onedark.vim'
 
-Plug 'wfxr/minimap.vim'
+"Plug 'wfxr/minimap.vim'
 Plug 'Jimeno0/vim-chito'
 Plug 'cocopon/iceberg.vim'
 Plug 'arzg/vim-substrata'
