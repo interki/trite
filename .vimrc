@@ -154,3 +154,5 @@ nnoremap ; :
 nnoremap : ;
 nnoremap <C-PageUp> :bnext<CR>
 nnoremap <C-PageDown> :bprevious<CR>
+nnoremap <Up> <C-y>
+nnoremap <Down> <C-e>
