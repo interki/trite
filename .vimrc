@@ -62,6 +62,7 @@ set thesaurus+=/home/think/.vim/thesaurus/mthesaur.txt
 set complete+=k
 set ignorecase
 set smartcase
+set foldmethod=manual
 
 set tw=80
 set fo=aw2tq  
@@ -76,7 +77,7 @@ if has('gui_running')
 
 	"set guifont=Consolas\ for\ Powerline\ 13
 	"set guifont=Consolas\ Regular\ 13
-	set guifont=Terminus\ (TTF)\ Medium\ 15
+	set guifont=Terminus\ (TTF)\ Medium\ 16
 	"set guifont=Terminus\ Medium\ 15
 
 	set background=dark
@@ -128,7 +129,11 @@ endif
 filetype plugin on 
 syntax on
 let g:vimwiki_list = [{'path': '~/OneDrive/Documents/notes/', 'syntax': 'markdown', 'ext': '.md'}]
-"let g:vimwiki_list += [{'path': '~/Documents/d', 'syntax': 'vimwiki'}]
+
+"let g:vimwiki_list = [
+"	\ {'path': '~/OneDrive/Documents/notes/', 'syntax': 'markdown', 'ext': '.md'},
+"  \ {'path': '~/OneDrive/Documents/notes/cover', 'syntax': 'markdown', 'ext': '.md'}
+"  \ ]
 
 let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
 
@@ -147,12 +152,109 @@ function! ToggleSpellCheck()
   endif
 endfunction
 
+"Toggle location list
+function! ToggleLocationList()
+    let l:window_count = winnr('$')
+    lclose
+    " If the number of windows didn't change, the location list wasn't open
+    if winnr('$') == l:window_count
+        try
+            lopen
+        catch /E776:/
+            echo "Location list is empty"
+        endtry
+    endif
+endfunction
+
+" Save automatically on text changes or insert leave
+" autocmd TextChanged,InsertLeave * silent! wall
+
+" Bind to <leader>l (Change to your preferred key combination)
+nnoremap <silent> <leader>l :call ToggleLocationList()<CR>
+
+
 nnoremap <silent> <Leader>S :call ToggleSpellCheck()<CR>
 nnoremap <silent> <Leader>b :Buffers<CR>
-nnoremap <silent> <Leader>D :w !diff % -<CR>
+nnoremap <silent> <Leader>d :w !diff % -<CR>
+nnoremap <silent> <Leader>o O<CR><UP>
+nnoremap <silent> <Leader>p "+1p
+nnoremap <silent> <Leader>; vip
 nnoremap ; :
 nnoremap : ;
 nnoremap <C-PageUp> :bnext<CR>
 nnoremap <C-PageDown> :bprevious<CR>
-nnoremap <Up> <C-y>
-nnoremap <Down> <C-e>
+nnoremap L :bnext<CR>
+nnoremap H :bprevious<CR>
+nnoremap <Up> <C-y><C-y>
+nnoremap <Down> <C-e><C-e>
+nnoremap K <C-y><C-y>
+nnoremap J <C-e><C-e>
+inoremap <C-d> <esc> 
+inoremap kj <esc>
+"vnoremap kj <esc>
+nnoremap <Leader>ff :VimwikiSearch 
+"nmap <Leader>pp <Plug>VimwikiFollowLink`
+nnoremap <silent> <Leader>F :Files <C-R>=expand('%:h')<CR><CR>
+
+" 1. Track the active status of Limelight
+let g:limelight_keys_active = 0
+
+function! ToggleLimelightWithKeys()
+    " 2. Execute the actual plugin toggle
+		execute 'Limelight!!'
+
+    " 3. Swap the keybindings dynamically
+    if g:limelight_keys_active == 0
+        " Place mappings you want ONLY during Limelight here
+				nnoremap } }j
+				nnoremap { {{j
+				set scrolloff=15
+        
+        let g:limelight_keys_active = 1
+    else
+        " Safely unmap those keys when Limelight is turned off
+				nnoremap } }
+				nnoremap { {
+				set scrolloff=5
+        
+        let g:limelight_keys_active = 0
+    endif
+endfunction
+
+nnoremap <leader>i :call ToggleLimelightWithKeys()<CR>
+
+"augroup LimelightMappings
+"    autocmd!
+"    " When Limelight turns on: map keys
+"    autocmd User Limelight nnoremap } }j
+"    autocmd User Limelight nnoremap { {{j
+"
+"    " When Limelight turns off: restore default behavior
+"    autocmd User LimelightLeave nunmap }
+"    autocmd User LimelightLeave nunmap {
+"" augroup END
+
+function! s:goyo_enter()
+  " Turn on Limelight
+  Limelight
+  
+  " Enable your custom paragraph mappings
+  nnoremap } }j
+  nnoremap { {{j
+	set scrolloff=15
+endfunction
+
+function! s:goyo_leave()
+  " Turn off Limelight
+  Limelight!
+  
+  " Clean up and restore default Vim motions
+  nunmap }
+  nunmap {
+	set scrolloff=5
+endfunction
+
+" Register the functions to run when Goyo opens and closes
+autocmd! User GoyoEnter nested call <SID>goyo_enter()
+autocmd! User GoyoLeave nested call <SID>goyo_leave()
+
