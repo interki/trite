@@ -1,5 +1,21 @@
+"unlet! skip_defaults_vim
+"source $VIMRUNTIME/defaults.vim
 set nocompatible              " be iMproved, required
 filetype off                  " required
+syntax enable
+filetype plugin on
+syntax on
+set hlsearch
+set incsearch
+set backspace=2
+set mouse=a
+set t_Co=256
+set autoindent
+set hidden
+set wildmenu
+set wrapscan
+set encoding=utf-8
+set complete+=k
 
 " vim=plug automatic installation
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -32,44 +48,30 @@ Plug 'rakr/vim-one'
 Plug 'https://gitlab.com/yorickpeterse/vim-paper.git'
 Plug 'https://github.com/preservim/vim-pencil'
 Plug 'https://github.com/chrisbra/recover.vim'
+Plug 'justinmk/vim-sneak'
 
 
 call plug#end()
 
-set encoding=utf-8
-set term=xterm-256color
-set t_Co=256
+"set term=xterm-256color
 set termguicolors
 
-syntax enable
 colorscheme hybrid
 set background=light
-set hidden
 set confirm
 set relativenumber
 set number
-set wildmenu
-set wrapscan
-set backspace=2
-set mouse=a
 set shiftwidth=2
 set tabstop=2
 set scrolloff=5
-set incsearch
-set autoindent
 set dictionary+=/usr/share/dict/cracklib-small 
 set thesaurus+=/home/think/.vim/thesaurus/mthesaur.txt
-set complete+=k
 set ignorecase
 set smartcase
 set foldmethod=manual
-
 set tw=80
 set fo=aw2tq  
-"set formatoptions+=a
- 
-"au VimEnter * set laststatus=0
-"
+
 if has('gui_running')
 	python3 from powerline.vim import setup as powerline_setup
 	python3 powerline_setup()
@@ -108,26 +110,11 @@ if has('gui_running')
 	set showcmd
 	set showtabline=2
 
-	"let g:airline_theme='monochrome'
-
-	"let g:airline_powerline_fonts = 1
-	"let g:airline#extensions#tabline#enabled = 1
-	"let g:airline#extensions#tabline#show_buffers = 1
-	"let g:Powerline_symbols = 'unicode'
-	"let g:pymcd_powerline="py3"
-	"let g:Powerline_symbols = 'fancy'
-
-	"let g:airline#extensions#tabline#show_close_button = 0
-	"let g:loaded_airline = 1
-	"let g:airline_symbols.space = "\ua0"
-
 endif
 
 "au VimEnter * AirlineToggle
 
 "Vim Wiki
-filetype plugin on 
-syntax on
 let g:vimwiki_list = [{'path': '~/OneDrive/Documents/notes/', 'syntax': 'markdown', 'ext': '.md'}]
 
 "let g:vimwiki_list = [
@@ -141,6 +128,7 @@ au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 nmap <C-l> <Plug>VimwikiGoToNextHeader
 nmap <C-h> <Plug>VimwikiGoToPrevHeader
 nmap <Leader>wn <Plug>VimwikiNextLink
+let g:vimwiki_autowriteall = 0
 
 "Toggle spellchecking
 function! ToggleSpellCheck()
@@ -151,6 +139,7 @@ function! ToggleSpellCheck()
     echo "Spellcheck OFF"
   endif
 endfunction
+nnoremap <silent> <Leader>S :call ToggleSpellCheck()<CR>
 
 "Toggle location list
 function! ToggleLocationList()
@@ -165,20 +154,47 @@ function! ToggleLocationList()
         endtry
     endif
 endfunction
+nnoremap <silent> <leader>l :call ToggleLocationList()<CR>
 
 " Save automatically on text changes or insert leave
 " autocmd TextChanged,InsertLeave * silent! wall
 
-" Bind to <leader>l (Change to your preferred key combination)
-nnoremap <silent> <leader>l :call ToggleLocationList()<CR>
+" 1. Track the active status of Limelight
+let g:limelight_keys_active = 0
+function! ToggleLimelightWithKeys()
+    " 2. Execute the actual plugin toggle
+		execute 'Limelight!!'
+		" 3. Swap the keybindings dynamically
+    if g:limelight_keys_active == 0
+        " Place mappings you want ONLY during Limelight here
+				nnoremap } }j
+				nnoremap { {{j
+				set scrolloff=15
+        let g:limelight_keys_active = 1
+    else
+        " Safely unmap those keys when Limelight is turned off
+				nnoremap } }
+				nnoremap { {
+				set scrolloff=5
+        let g:limelight_keys_active = 0
+    endif
+endfunction
+nnoremap <leader>i :call ToggleLimelightWithKeys()<CR>
 
+function! SafeVimwikiFix()
+  silent! nunmap <buffer> <CR>
+  silent! vunmap <buffer> <CR>
+  nmap <buffer> <Leader>g <Plug>VimwikiFollowLink
+endfunction
+augroup VimwikiEnterFix
+  autocmd!
+  autocmd FileType vimwiki call SafeVimwikiFix()
+augroup END
 
-nnoremap <silent> <Leader>S :call ToggleSpellCheck()<CR>
 nnoremap <silent> <Leader>b :Buffers<CR>
 nnoremap <silent> <Leader>d :w !diff % -<CR>
 nnoremap <silent> <Leader>o O<CR><UP>
 nnoremap <silent> <Leader>p "+1p
-nnoremap <silent> <Leader>; vip
 nnoremap ; :
 nnoremap : ;
 nnoremap <C-PageUp> :bnext<CR>
@@ -187,74 +203,84 @@ nnoremap L :bnext<CR>
 nnoremap H :bprevious<CR>
 nnoremap <Up> <C-y><C-y>
 nnoremap <Down> <C-e><C-e>
-nnoremap K <C-y><C-y>
-nnoremap J <C-e><C-e>
+nnoremap <C-k> <C-y><C-y><C-y>
+nnoremap <C-j> <C-e><C-e><C-e>
 inoremap <C-d> <esc> 
 inoremap kj <esc>
-"vnoremap kj <esc>
 nnoremap <Leader>ff :VimwikiSearch 
-"nmap <Leader>pp <Plug>VimwikiFollowLink`
 nnoremap <silent> <Leader>F :Files <C-R>=expand('%:h')<CR><CR>
+nnoremap <silent> <Esc> :noh<CR><Esc>
 
-" 1. Track the active status of Limelight
-let g:limelight_keys_active = 0
+nnoremap <Leader>8 a*p*[]<Esc>i
+nnoremap <Leader>v GVgg
+nnoremap <expr> n 'Nn'[v:searchforward]
+nnoremap <expr> N 'nN'[v:searchforward]
+let g:sneak#label = 1
 
-function! ToggleLimelightWithKeys()
-    " 2. Execute the actual plugin toggle
-		execute 'Limelight!!'
+function! ZigZagInvertSelection() range
+    let l:save_cursor = getpos('.')
+    let l:start = a:firstline
+    let l:end = a:lastline
+    
+    let l:sw = shiftwidth()
+    let l:indent_char = &expandtab ? ' ' : '	'
+    
+    " Step 1: Snapshot original indents and find the true structural baseline
+    let l:min_indent = -1
+    let l:orig_indents = []
+    
+    let l:current_line = l:start
+    while l:current_line <= l:end
+        let l:line_text = getline(l:current_line)
+        let l:ind = (l:line_text =~ '^\s*$') ? -1 : indent(l:current_line)
+        call add(l:orig_indents, l:ind)
+        if l:ind != -1 && (l:min_indent == -1 || l:ind < l:min_indent)
+            let l:min_indent = l:ind
+        endif
+        let l:current_line += 1
+    endwhile
 
-    " 3. Swap the keybindings dynamically
-    if g:limelight_keys_active == 0
-        " Place mappings you want ONLY during Limelight here
-				nnoremap } }j
-				nnoremap { {{j
-				set scrolloff=15
-        
-        let g:limelight_keys_active = 1
-    else
-        " Safely unmap those keys when Limelight is turned off
-				nnoremap } }
-				nnoremap { {
-				set scrolloff=5
-        
-        let g:limelight_keys_active = 0
-    endif
+    if l:min_indent == -1 | return | endif
+
+    " Step 2: Safely determine global layout state (A or B) using the completed snapshot
+    let l:is_state_b = 0
+    for l:ind in l:orig_indents
+        if l:ind == l:min_indent + l:sw | let l:is_state_b = 1 | break | endif
+        if l:ind == l:min_indent | break | endif
+    endfor
+
+    " Step 3: Traverse and apply the mathematical toggle rules using the snapshot
+    let l:active_parent_is_p1 = 1
+    let l:idx = 0
+    let l:current_line = l:start
+    
+    while l:current_line <= l:end
+        let l:ind = l:orig_indents[l:idx]
+        if l:ind != -1
+            " Track active parent tree context safely using original unmutated values
+            if l:ind == l:min_indent
+                let l:active_parent_is_p1 = !l:is_state_b
+            elseif l:ind == l:min_indent + l:sw
+                let l:active_parent_is_p1 = l:is_state_b
+            endif
+
+            " Execute perfectly mirrored structural shifts
+            if l:active_parent_is_p1
+                let l:new_size = l:ind + (l:is_state_b ? -l:sw : l:sw)
+            else
+                let l:new_size = (l:ind <= l:min_indent + l:sw) ? (l:ind + (l:is_state_b ? l:sw : -l:sw)) : l:ind
+            endif
+
+            " Commit text change directly to the file buffer
+            let l:clean_text = substitute(getline(l:current_line), '^\s*', '', '')
+            let l:new_leading = repeat(l:indent_char, &expandtab ? l:new_size : (l:new_size / l:sw))
+            call setline(l:current_line, l:new_leading . l:clean_text)
+        endif
+        let l:idx += 1
+        let l:current_line += 1
+    endwhile
+    
+    call setpos('.', l:save_cursor)
 endfunction
 
-nnoremap <leader>i :call ToggleLimelightWithKeys()<CR>
-
-"augroup LimelightMappings
-"    autocmd!
-"    " When Limelight turns on: map keys
-"    autocmd User Limelight nnoremap } }j
-"    autocmd User Limelight nnoremap { {{j
-"
-"    " When Limelight turns off: restore default behavior
-"    autocmd User LimelightLeave nunmap }
-"    autocmd User LimelightLeave nunmap {
-"" augroup END
-
-function! s:goyo_enter()
-  " Turn on Limelight
-  Limelight
-  
-  " Enable your custom paragraph mappings
-  nnoremap } }j
-  nnoremap { {{j
-	set scrolloff=15
-endfunction
-
-function! s:goyo_leave()
-  " Turn off Limelight
-  Limelight!
-  
-  " Clean up and restore default Vim motions
-  nunmap }
-  nunmap {
-	set scrolloff=5
-endfunction
-
-" Register the functions to run when Goyo opens and closes
-autocmd! User GoyoEnter nested call <SID>goyo_enter()
-autocmd! User GoyoLeave nested call <SID>goyo_leave()
-
+xnoremap Z :call ZigZagInvertSelection()<CR>
