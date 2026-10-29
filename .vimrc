@@ -1,21 +1,22 @@
-"unlet! skip_defaults_vim
-"source $VIMRUNTIME/defaults.vim
-set nocompatible              " be iMproved, required
-filetype off                  " required
-syntax enable
-filetype plugin on
-syntax on
+unlet! skip_defaults_vim
+source $VIMRUNTIME/defaults.vim
+"set nocompatible              " be iMproved, required
+"filetype off                  " required
+"syntax enable
+"filetype plugin on
+"syntax on
 set hlsearch
-set incsearch
-set backspace=2
-set mouse=a
-set t_Co=256
+packadd nohlsearch
+"set incsearch
+"set backspace=2
+"set mouse=a
+"set t_Co=256
 set autoindent
-set hidden
-set wildmenu
-set wrapscan
-set encoding=utf-8
-set complete+=k
+"set hidden
+"set wildmenu
+"set wrapscan
+"set encoding=utf-8
+"set complete+=k
 
 " vim=plug automatic installation
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -49,6 +50,7 @@ Plug 'https://gitlab.com/yorickpeterse/vim-paper.git'
 Plug 'https://github.com/preservim/vim-pencil'
 Plug 'https://github.com/chrisbra/recover.vim'
 Plug 'justinmk/vim-sneak'
+"Plug 'romainl/vim-cool'
 
 
 call plug#end()
@@ -194,6 +196,7 @@ augroup END
 nnoremap <silent> <Leader>b :Buffers<CR>
 nnoremap <silent> <Leader>d :w !diff % -<CR>
 nnoremap <silent> <Leader>o O<CR><UP>
+nnoremap <silent> <Leader>[ o<Esc>
 nnoremap <silent> <Leader>p "+1p
 nnoremap ; :
 nnoremap : ;
@@ -208,14 +211,19 @@ nnoremap <C-j> <C-e><C-e><C-e>
 inoremap <C-d> <esc> 
 inoremap kj <esc>
 nnoremap <Leader>ff :VimwikiSearch 
-nnoremap <silent> <Leader>F :Files <C-R>=expand('%:h')<CR><CR>
-nnoremap <silent> <Esc> :noh<CR><Esc>
-
+nnoremap <silent> <Leader>f :Files <C-R>=expand('%:h')<CR><CR>
+"nnoremap <silent> <Esc> :noh<CR><Esc>
 nnoremap <Leader>8 a*p*[]<Esc>i
 nnoremap <Leader>v GVgg
 nnoremap <expr> n 'Nn'[v:searchforward]
 nnoremap <expr> N 'nN'[v:searchforward]
 let g:sneak#label = 1
+nnoremap <Leader>n mayap}p`a
+nnoremap <Leader>N mayapGo<Esc>p`a
+nnoremap Y ,
+
+command! -bang -nargs=? -complete=dir Buffers
+  \ call fzf#vim#buffers({'options': ['--exact', '--tiebreak=index']}, <bang>0)
 
 function! ZigZagInvertSelection() range
     let l:save_cursor = getpos('.')
