@@ -70,7 +70,6 @@ set dictionary+=/usr/share/dict/cracklib-small
 set thesaurus+=/home/think/.vim/thesaurus/mthesaur.txt
 set ignorecase
 set smartcase
-set foldmethod=manual
 set tw=80
 set fo=aw2tq  
 
@@ -126,7 +125,7 @@ let g:vimwiki_list = [{'path': '~/OneDrive/Documents/notes/', 'syntax': 'markdow
 
 let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
 
-au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
+"au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
 nmap <C-l> <Plug>VimwikiGoToNextHeader
 nmap <C-h> <Plug>VimwikiGoToPrevHeader
 nmap <Leader>wn <Plug>VimwikiNextLink
@@ -224,8 +223,86 @@ nnoremap Y ,
 
 command! -bang -nargs=? -complete=dir Buffers
   \ call fzf#vim#buffers({'options': ['--exact', '--tiebreak=index']}, <bang>0)
+autocmd FileType markdown,vimwiki syntax sync minlines=40 maxlines=150
+"autocmd FileType markdown,vimwiki syntax clear
+
+"function! ZigZagInvertSelection() range
+		"let l:save_cursor = getpos('.')
+		"let l:start = a:firstline
+		"let l:end = a:lastline
+		
+		"let l:sw = shiftwidth()
+		"let l:indent_char = &expandtab ? ' ' : '	'
+		
+		"" Step 1: Snapshot original indents and find the true structural baseline
+		"let l:min_indent = -1
+		"let l:orig_indents = []
+		
+		"let l:current_line = l:start
+		"while l:current_line <= l:end
+				"let l:line_text = getline(l:current_line)
+				"let l:ind = (l:line_text =~ '^\s*$') ? -1 : indent(l:current_line)
+				"call add(l:orig_indents, l:ind)
+				"if l:ind != -1 && (l:min_indent == -1 || l:ind < l:min_indent)
+						"let l:min_indent = l:ind
+				"endif
+				"let l:current_line += 1
+		"endwhile
+
+		"if l:min_indent == -1 | return | endif
+
+		"" Step 2: Safely determine global layout state (A or B) using the completed snapshot
+		"let l:is_state_b = 0
+		"for l:ind in l:orig_indents
+				"if l:ind == l:min_indent + l:sw | let l:is_state_b = 1 | break | endif
+				"if l:ind == l:min_indent | break | endif
+		"endfor
+
+		"" Step 3: Traverse and apply the mathematical toggle rules using the snapshot
+		"let l:active_parent_is_p1 = 1
+		"let l:idx = 0
+		"let l:current_line = l:start
+		
+		"while l:current_line <= l:end
+				"let l:ind = l:orig_indents[l:idx]
+				"if l:ind != -1
+						"" Track active parent tree context safely using original unmutated values
+						"if l:ind == l:min_indent
+								"let l:active_parent_is_p1 = !l:is_state_b
+						"elseif l:ind == l:min_indent + l:sw
+								"let l:active_parent_is_p1 = l:is_state_b
+						"endif
+
+						"" Execute perfectly mirrored structural shifts
+						"if l:active_parent_is_p1
+								"let l:new_size = l:ind + (l:is_state_b ? -l:sw : l:sw)
+						"else
+								"let l:new_size = (l:ind <= l:min_indent + l:sw) ? (l:ind + (l:is_state_b ? l:sw : -l:sw)) : l:ind
+						"endif
+
+						"" Commit text change directly to the file buffer
+						"let l:clean_text = substitute(getline(l:current_line), '^\s*', '', '')
+						"let l:new_leading = repeat(l:indent_char, &expandtab ? l:new_size : (l:new_size / l:sw))
+						"call setline(l:current_line, l:new_leading . l:clean_text)
+				"endif
+				"let l:idx += 1
+				"let l:current_line += 1
+		"endwhile
+		
+		"call setpos('.', l:save_cursor)
+"endfunction
+
+"xnoremap Z :call ZigZagInvertSelection()<CR>
 
 function! ZigZagInvertSelection() range
+    " --- EFFICIENCY BLOCK START ---
+    let l:save_lazy = &lazyredraw
+    let l:save_ei = &eventignore
+    setlocal lazyredraw
+    setlocal eventignore=all
+    silent! undojoin
+    " --- EFFICIENCY BLOCK END ---
+
     let l:save_cursor = getpos('.')
     let l:start = a:firstline
     let l:end = a:lastline
@@ -248,7 +325,12 @@ function! ZigZagInvertSelection() range
         let l:current_line += 1
     endwhile
 
-    if l:min_indent == -1 | return | endif
+    if l:min_indent == -1
+        " --- CLEANUP ON EARLY EXIT ---
+        let &lazyredraw = l:save_lazy
+        let &eventignore = l:save_ei
+        return 
+    endif
 
     " Step 2: Safely determine global layout state (A or B) using the completed snapshot
     let l:is_state_b = 0
@@ -285,10 +367,16 @@ function! ZigZagInvertSelection() range
             call setline(l:current_line, l:new_leading . l:clean_text)
         endif
         let l:idx += 1
+        " --- RESTORE THE SYSTEM ITERATOR LOOP ---
         let l:current_line += 1
     endwhile
     
     call setpos('.', l:save_cursor)
+
+    " --- EFFICIENCY RESTORE START ---
+    let &lazyredraw = l:save_lazy
+    let &eventignore = l:save_ei
+    " --- EFFICIENCY RESTORE END ---
 endfunction
 
-xnoremap Z :call ZigZagInvertSelection()<CR>
+vnoremap <silent> <Leader>z :call ZigZagInvertSelection()<CR>
