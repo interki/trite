@@ -226,6 +226,14 @@ command! -bang -nargs=? -complete=dir Buffers
 autocmd FileType markdown,vimwiki syntax sync minlines=40 maxlines=150
 "autocmd FileType markdown,vimwiki syntax clear
 
+augroup VimwikiSearchRefinement
+  autocmd!
+  " 1. Map Enter to select and close inside the location list
+  autocmd FileType qf nnoremap <buffer> <CR> <CR>:lclose<CR>
+  " 2. Auto-open the list on search and jump the cursor into it
+  autocmd QuickFixCmdPost l* lwindow | call timer_start(5, {-> execute('if &filetype != "quickfix" | wincmd j | endif')})
+augroup END
+
 "function! ZigZagInvertSelection() range
 		"let l:save_cursor = getpos('.')
 		"let l:start = a:firstline

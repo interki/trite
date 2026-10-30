@@ -24,7 +24,10 @@ export PATH="$PATH:$HOME/.rvm/bin"
 export EDITOR=vim
 # export NNN_TMPFILE="/tmp/nnn"
 export NNN_USE_EDITOR=1
-export NNN_PLUG='o:fzy-open;p:mocplay;d:ndiff;m:nmount;t:thumb'
+#export NNN_PLUG='o:fzy-open;p:mocplay;d:ndiff;m:nmount;t:thumb'
+#export NNN_PLUG='s:!echo -n "$nnn" | xclip -selection clipboard'
+export NNN_PLUG='o:fzy-open;p:mocplay;d:ndiff;m:nmount;t:thumb;c:copypath'
+
 export NNN_TRASH=1
 
 n()
