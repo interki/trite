@@ -221,6 +221,14 @@ nnoremap <Leader>n mayap}p`a
 nnoremap <Leader>N mayapGo<Esc>p`a
 nnoremap Y ,
 
+function! VoicePaste()
+  let l:clip = getreg('+') != '' ? getreg('+') : getreg('*')
+  let l:clean = substitute(l:clip, '^Voice\s*\|\.m4a\s*$', '', 'g')
+  let @v = '[' . trim(l:clean) . ']'
+  normal! "vp
+endfunction
+nnoremap <silent> <Leader>V :call VoicePaste()<CR>
+
 command! -bang -nargs=? -complete=dir Buffers
   \ call fzf#vim#buffers({'options': ['--exact', '--tiebreak=index']}, <bang>0)
 autocmd FileType markdown,vimwiki syntax sync minlines=40 maxlines=150
