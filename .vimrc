@@ -12,7 +12,7 @@ packadd nohlsearch
 "set mouse=a
 "set t_Co=256
 set autoindent
-"set hidden
+set hidden
 "set wildmenu
 "set wrapscan
 "set encoding=utf-8
@@ -192,10 +192,12 @@ augroup VimwikiEnterFix
   autocmd FileType vimwiki call SafeVimwikiFix()
 augroup END
 
+iabbrev poeple people
 nnoremap <silent> <Leader>b :Buffers<CR>
 nnoremap <silent> <Leader>d :w !diff % -<CR>
 nnoremap <silent> <Leader>o O<CR><UP>
 nnoremap <silent> <Leader>[ o<Esc>
+"nnoremap <silent>o o<Esc>
 nnoremap <silent> <Leader>p "+1p
 nnoremap ; :
 nnoremap : ;
@@ -209,17 +211,18 @@ nnoremap <C-k> <C-y><C-y><C-y>
 nnoremap <C-j> <C-e><C-e><C-e>
 inoremap <C-d> <esc> 
 inoremap kj <esc>
-nnoremap <Leader>ff :VimwikiSearch 
+nnoremap <Leader>s :VimwikiSearch 
 nnoremap <silent> <Leader>f :Files <C-R>=expand('%:h')<CR><CR>
-"nnoremap <silent> <Esc> :noh<CR><Esc>
+nnoremap <silent> <Esc> :noh<CR><Esc>
 nnoremap <Leader>8 a*p*[]<Esc>i
 nnoremap <Leader>v GVgg
 nnoremap <expr> n 'Nn'[v:searchforward]
 nnoremap <expr> N 'nN'[v:searchforward]
 let g:sneak#label = 1
-nnoremap <Leader>n mayap}p`a
-nnoremap <Leader>N mayapGo<Esc>p`a
+nnoremap <Leader>r mayap}p`a
+nnoremap <Leader>R mayapGo<Esc>p`a
 nnoremap Y ,
+nnoremap Q 1z=
 
 function! VoicePaste()
   let l:clip = getreg('+') != '' ? getreg('+') : getreg('*')
