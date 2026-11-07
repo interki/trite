@@ -397,5 +397,21 @@ function! ZigZagInvertSelection() range
     let &eventignore = l:save_ei
     " --- EFFICIENCY RESTORE END ---
 endfunction
-
 vnoremap <silent> <Leader>z :call ZigZagInvertSelection()<CR>
+
+"traverse buffers cronologically
+function! SmoothBufJump(dir)
+    let [b:winview, l:jumps, l:curr] = [winsaveview(), getjumplist()[0], getjumplist()[1]]
+    let l:step = a:dir == 'H' ? -1 : 1
+    let l:idx = l:curr + l:step
+    while l:idx >= 0 && l:idx < len(l:jumps)
+        if l:jumps[l:idx].bufnr != bufnr('%') && bufexists(l:jumps[l:idx].bufnr)
+            execute "normal! " . abs(l:idx - l:curr) . (a:dir == 'H' ? "\<C-o>" : "\<C-i>")
+            if exists('b:winview') | call winrestview(b:winview) | endif
+            return
+        endif
+        let l:idx += l:step
+    endwhile
+endfunction
+nnoremap <silent> H :call SmoothBufJump('H')<CR>
+nnoremap <silent> L :call SmoothBufJump('L')<CR>
