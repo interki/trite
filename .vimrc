@@ -196,9 +196,9 @@ iabbrev poeple people
 nnoremap <silent> <Leader>b :Buffers<CR>
 nnoremap <silent> <Leader>d :w !diff % -<CR>
 nnoremap <silent> <Leader>o O<CR><UP>
-nnoremap <silent> <Leader>[ o<Esc>
-"nnoremap <silent>o o<Esc>
+nnoremap <silent> <Space> o<Esc>
 nnoremap <silent> <Leader>p "+1p
+nnoremap <silent> <Leader>y "+1y
 nnoremap ; :
 nnoremap : ;
 nnoremap <C-PageUp> :bnext<CR>
