@@ -74,46 +74,18 @@ set tw=80
 set fo=aw2tq  
 
 if has('gui_running')
-	python3 from powerline.vim import setup as powerline_setup
-	python3 powerline_setup()
-	python3 del powerline_setup
-
-	"set guifont=Consolas\ for\ Powerline\ 13
-	"set guifont=Consolas\ Regular\ 13
 	set guifont=Terminus\ (TTF)\ Medium\ 16
-	"set guifont=Terminus\ Medium\ 15
-
-	set background=dark
-	colorscheme onedark
-	set noerrorbells
-	set visualbell 
-	set t_vb=
-	" set belloff=all
-	set guioptions-=m 
-	set guioptions-=T
-	set guioptions-=L
-	set guioptions+=d
-	set guioptions-=e
-	set guioptions+=c
-	set wildmode
-	set showcmd
-	set ignorecase
-	set smartcase
-	set tw=140
-	set wrap linebreak nolist
-	set breakindent
-
-	let g:goyo_width = 145
-	let g:goyo_height = 100
-	let g:goyo_linenr = 1
-
-	au VimEnter * set laststatus=2
-	set showcmd
-	set showtabline=2
-
+	set guifont=Liberation\ Mono\ 12
+	set guifont=Cousine\ 12
+	highlight Normal guibg=#e3e3e3
+	"set background=dark
+	"colorscheme onedark
+	"set noerrorbells
+	"set visualbell 
+	"set t_vb=
+	set belloff=all
+	set guioptions=c
 endif
-
-"au VimEnter * AirlineToggle
 
 "Vim Wiki
 let g:vimwiki_list = [{'path': '~/OneDrive/Documents/notes/', 'syntax': 'markdown', 'ext': '.md'}]
