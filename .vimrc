@@ -52,12 +52,9 @@ Plug 'https://github.com/chrisbra/recover.vim'
 Plug 'justinmk/vim-sneak'
 "Plug 'romainl/vim-cool'
 
-
 call plug#end()
 
-"set term=xterm-256color
 set termguicolors
-
 colorscheme hybrid
 set background=light
 set confirm
@@ -74,12 +71,12 @@ set tw=80
 set fo=aw2tq  
 
 if has('gui_running')
-	set guifont=Terminus\ (TTF)\ Medium\ 16
 	set guifont=Liberation\ Mono\ 12
 	set guifont=Cousine\ 12
 	highlight Normal guibg=#e3e3e3
-	"set background=dark
-	"colorscheme onedark
+	"set guicursor=a:blinkwait1000-blinkon1000-blinkoff1000
+	set guicursor=a:blinkon0
+
 	"set noerrorbells
 	"set visualbell 
 	"set t_vb=
@@ -169,8 +166,8 @@ nnoremap <silent> <Leader>b :Buffers<CR>
 nnoremap <silent> <Leader>d :w !diff % -<CR>
 nnoremap <silent> <Leader>o O<CR><UP>
 nnoremap <silent> <Space> o<Esc>
-nnoremap <silent> <Leader>p "+1p
-nnoremap <silent> <Leader>y "+1y
+noremap <silent> <Leader>p "+p
+noremap <silent> <Leader>y "+y
 nnoremap ; :
 nnoremap : ;
 nnoremap <C-PageUp> :bnext<CR>
@@ -191,6 +188,8 @@ nnoremap <Leader>v GVgg
 nnoremap <expr> n 'Nn'[v:searchforward]
 nnoremap <expr> N 'nN'[v:searchforward]
 let g:sneak#label = 1
+omap s <Plug>Sneak_s
+omap S <Plug>Sneak_S
 nnoremap <Leader>r mayap}p`a
 nnoremap <Leader>R mayapGo<Esc>p`a
 nnoremap Y ,
@@ -209,12 +208,31 @@ command! -bang -nargs=? -complete=dir Buffers
 autocmd FileType markdown,vimwiki syntax sync minlines=40 maxlines=150
 "autocmd FileType markdown,vimwiki syntax clear
 
+"augroup VimwikiSearchRefinement
+	"autocmd!
+	"" 1. Map Enter to select and close inside the location list
+	"autocmd FileType qf nnoremap <buffer> <CR> <CR>:lclose<CR>
+	"" 2. Auto-open the list on search and jump the cursor into it
+	"autocmd QuickFixCmdPost l* lwindow | call timer_start(5, {-> execute('if &filetype != "quickfix" | wincmd j | endif')})
+"augroup END
+
+"augroup VimwikiSearchRefinement
+  "autocmd!
+  "" 1. Map Enter to select and close inside the location list
+  "autocmd FileType qf nnoremap <buffer> <CR> <CR>:lclose<CR>
+  "" 2. Auto-open the list on search and jump the cursor into it
+  "autocmd QuickFixCmdPost l* lwindow | call timer_start(5,
+        "\ {-> execute('if &filetype != "quickfix" | wincmd j | endif')})
+"augroup END
+
 augroup VimwikiSearchRefinement
   autocmd!
   " 1. Map Enter to select and close inside the location list
   autocmd FileType qf nnoremap <buffer> <CR> <CR>:lclose<CR>
-  " 2. Auto-open the list on search and jump the cursor into it
-  autocmd QuickFixCmdPost l* lwindow | call timer_start(5, {-> execute('if &filetype != "quickfix" | wincmd j | endif')})
+  " 2. Auto-open list, snap view back, and wipe out false messages
+  autocmd QuickFixCmdPost l* lwindow | normal! `^ | redraw!
+  autocmd QuickFixCmdPost l* call timer_start(5,
+        \ {-> execute('if &filetype != "quickfix" | wincmd j | endif')})
 augroup END
 
 "function! ZigZagInvertSelection() range
