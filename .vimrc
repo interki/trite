@@ -84,21 +84,30 @@ if has('gui_running')
 	set guioptions=c
 endif
 
+" Save automatically on text changes or insert leave
+" autocmd TextChanged,InsertLeave * silent! wall
+
+"Fix Onedrive
+autocmd BufWritePre * checktime
+autocmd FileChangedShell * if v:fcs_reason == 'time' | let v:fcs_choice = '' | endif
+
 "Vim Wiki
 let g:vimwiki_list = [{'path': '~/OneDrive/Documents/notes/', 'syntax': 'markdown', 'ext': '.md'}]
-
-"let g:vimwiki_list = [
-"	\ {'path': '~/OneDrive/Documents/notes/', 'syntax': 'markdown', 'ext': '.md'},
-"  \ {'path': '~/OneDrive/Documents/notes/cover', 'syntax': 'markdown', 'ext': '.md'}
-"  \ ]
-
 let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
-
-"au BufNewFile,BufFilePre,BufRead *.md set filetype=markdown
-nmap <C-l> <Plug>VimwikiGoToNextHeader
-nmap <C-h> <Plug>VimwikiGoToPrevHeader
-nmap <Leader>wn <Plug>VimwikiNextLink
+"nmap <C-l> <Plug>VimwikiGoToNextHeader
+"nmap <C-h> <Plug>VimwikiGoToPrevHeader
+"nmap <Leader>wn <Plug>VimwikiNextLink
 let g:vimwiki_autowriteall = 0
+
+function! SafeVimwikiFix()
+  silent! nunmap <buffer> <CR>
+  silent! vunmap <buffer> <CR>
+  nmap <buffer> <Leader>g <Plug>VimwikiFollowLink
+endfunction
+augroup VimwikiEnterFix
+  autocmd!
+  autocmd FileType vimwiki call SafeVimwikiFix()
+augroup END
 
 "Toggle spellchecking
 function! ToggleSpellCheck()
@@ -126,9 +135,6 @@ function! ToggleLocationList()
 endfunction
 nnoremap <silent> <leader>l :call ToggleLocationList()<CR>
 
-" Save automatically on text changes or insert leave
-" autocmd TextChanged,InsertLeave * silent! wall
-
 " 1. Track the active status of Limelight
 let g:limelight_keys_active = 0
 function! ToggleLimelightWithKeys()
@@ -151,16 +157,6 @@ function! ToggleLimelightWithKeys()
 endfunction
 nnoremap <leader>i :call ToggleLimelightWithKeys()<CR>
 
-function! SafeVimwikiFix()
-  silent! nunmap <buffer> <CR>
-  silent! vunmap <buffer> <CR>
-  nmap <buffer> <Leader>g <Plug>VimwikiFollowLink
-endfunction
-augroup VimwikiEnterFix
-  autocmd!
-  autocmd FileType vimwiki call SafeVimwikiFix()
-augroup END
-
 iabbrev poeple people
 nnoremap <silent> <Leader>b :Buffers<CR>
 nnoremap <silent> <Leader>d :w !diff % -<CR>
@@ -176,8 +172,10 @@ nnoremap L :bnext<CR>
 nnoremap H :bprevious<CR>
 nnoremap <Up> <C-y><C-y>
 nnoremap <Down> <C-e><C-e>
-nnoremap <C-k> <C-y><C-y><C-y>
-nnoremap <C-j> <C-e><C-e><C-e>
+nnoremap <C-l> <C-y><C-y><C-y>
+nnoremap <C-h> <C-e><C-e><C-e>
+noremap <C-j> }
+noremap <C-k> {
 inoremap <C-d> <esc> 
 inoremap kj <esc>
 nnoremap <Leader>s :VimwikiSearch 
@@ -216,23 +214,9 @@ autocmd FileType markdown,vimwiki syntax sync minlines=40 maxlines=150
 	"autocmd QuickFixCmdPost l* lwindow | call timer_start(5, {-> execute('if &filetype != "quickfix" | wincmd j | endif')})
 "augroup END
 
-"augroup VimwikiSearchRefinement
-  "autocmd!
-  "" 1. Map Enter to select and close inside the location list
-  "autocmd FileType qf nnoremap <buffer> <CR> <CR>:lclose<CR>
-  "" 2. Auto-open the list on search and jump the cursor into it
-  "autocmd QuickFixCmdPost l* lwindow | call timer_start(5,
-        "\ {-> execute('if &filetype != "quickfix" | wincmd j | endif')})
-"augroup END
-
-augroup VimwikiSearchRefinement
-  autocmd!
-  " 1. Map Enter to select and close inside the location list
+augroup VimwikiSearchRefinement | autocmd!
   autocmd FileType qf nnoremap <buffer> <CR> <CR>:lclose<CR>
-  " 2. Auto-open list, snap view back, and wipe out false messages
-  autocmd QuickFixCmdPost l* lwindow | normal! `^ | redraw!
-  autocmd QuickFixCmdPost l* call timer_start(5,
-        \ {-> execute('if &filetype != "quickfix" | wincmd j | endif')})
+  autocmd QuickFixCmdPost l* lwindow | wincmd j
 augroup END
 
 "function! ZigZagInvertSelection() range
