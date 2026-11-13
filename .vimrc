@@ -37,7 +37,7 @@ Plug 'mcchrish/nnn.vim'
 Plug 'scwood/vim-hybrid'
 "Plug 'https://gitlab.com/yorickpeterse/vim-paper.git'
 "Plug 'https://github.com/preservim/vim-pencil'
-"Plug 'https://github.com/chrisbra/recover.vim'
+Plug 'https://github.com/chrisbra/recover.vim'
 Plug 'justinmk/vim-sneak'
 "Plug 'romainl/vim-cool'
 
@@ -382,79 +382,133 @@ endfunction
 nnoremap <silent> H :call SmoothBufJump('H')<CR>
 nnoremap <silent> L :call SmoothBufJump('L')<CR>
 
-"function! SyncWikiHeader()
-  "let l:s_tag = '%%% START_HEADER %%%'
-  "let l:e_tag = '%%% END_HEADER %%%'
-  "let l:start = search(l:s_tag, 'nw')
-  "let l:end = search(l:e_tag, 'nw')
-  "if l:start == 0 || l:end == 0 || l:end <= l:start
-    "return
-  "endif
-
-  "let l:lines = getline(l:start + 1, l:end - 1)
-  "let l:body = escape(join(l:lines, "\n"), '\&~')
-  "let l:pat = l:s_tag . '\n\_.\{-}\n' . l:e_tag
-  "let l:rep = l:s_tag . "\n" . l:body . "\n" . l:e_tag
-
-  "let l:current = expand('%:p')
-  "for l:file in glob(expand('%:p:h') . '/*.md', 0, 1)
-    "if l:file !=# l:current
-      "let l:content = join(readfile(l:file), "\n")
-      "let l:updated = substitute(l:content, l:pat, l:rep, 'g')
-      "if l:updated !=# l:content
-        "call writefile(split(l:updated, "\n", 1), l:file, 'b')
-      "endif
-    "endif
-  "endfor
-  "silent! checktime
+"function! WriteOneDriveFile() abort
+	"if &readonly | echoerr "E45: 'readonly' option is set" | return | endif
+	"let l:eof = (&eol || !&bin ? [''] : [])
+	"call writefile(getline(1, '$') + l:eof, expand('<afile>:p'), 'b')
+	"setlocal nomodified
+	"let l:open = '\' . repeat('=', 50) . '%'
+	"let l:close = '\' . repeat('=', 49) . '%%'
+	"let l:o_esc = '\V' . escape(l:open, '\') . '\m'
+	"let l:c_esc = '\V' . escape(l:close, '\') . '\m'
+	"let [l:l1, l:l2] = [search('^' . l:o_esc . '$', 'nw'),
+				"\ search('^' . l:c_esc . '$', 'nw')]
+	"if expand('<afile>:e') ==# 'md' && l:l1 > 0 && l:l2 > l:l1
+		"let l:body = join(getline(l:l1 + 1, l:l2 - 1), "\n")
+		"let l:pat = '\(^\|' . "\n" . '\)\zs' . l:o_esc . '\n\_.\{-}\n'
+					"\ . l:c_esc . '\ze\($\|' . "\n" . '\)'
+		"let l:rep = escape(l:open . "\n" . l:body . "\n" . l:close, '\&~')
+		"let l:cur = expand('<afile>:p')
+		"let l:files = filter(glob(expand('<afile>:p:h') . '/*.md', 0, 1),
+					"\ 'v:val !=# l:cur')
+		"for l:f in l:files
+			"let l:old = join(readfile(l:f), "\n")
+			"let l:new = substitute(l:old, l:pat, l:rep, 'g')
+			"if l:new !=# l:old
+				"call writefile(split(l:new, "\n", 1), l:f, 'b')
+			"endif
+		"endfor
+	"endif
+	"silent! checktime
 "endfunction
-
-"function! WriteOneDriveFile()
-  "if &readonly
-    "echoerr "E45: 'readonly' option is set"
-    "return
-  "endif
-
-  "let l:eof = (&eol || !&bin ? [''] : [])
-  "call writefile(getline(1, '$') + l:eof, expand('<afile>:p'), 'b')
-  "setlocal nomodified
-  "silent! checktime
-
-  "if expand('<afile>:e') ==# 'md'
-    "call SyncWikiHeader()
-  "endif
-"endfunction
-
 "augroup FixOneDrive
-  "autocmd!
-  "autocmd BufWriteCmd ~/OneDrive/* call WriteOneDriveFile()
+	"autocmd!
+	"autocmd BufWriteCmd ~/OneDrive/* call WriteOneDriveFile()
 "augroup END
 
+" ============================================================================
+" Vimwiki Header Sync, File Includes & OneDrive Save Fix
+" ============================================================================
 
-function! WriteOneDriveFile() abort
-  if &readonly | echoerr "E45: 'readonly' option is set" | return | endif
+" --- 1. Peer-to-Peer Header Sync (\===% ... \===%%) ---
+function! SyncWikiHeader(cur, dir) abort
+  let l:open = '\' . repeat('=', 50) . '%'
+  let l:close = '\' . repeat('=', 49) . '%%'
+  let l:o_esc = '\V' . escape(l:open, '\') . '\m'
+  let l:c_esc = '\V' . escape(l:close, '\') . '\m'
 
-  let l:eof = (&eol || !&bin ? [''] : [])
-  call writefile(getline(1, '$') + l:eof, expand('<afile>:p'), 'b')
-  setlocal nomodified
+  let [l:l1, l:l2] = [search('^' . l:o_esc . '$', 'nw'),
+        \ search('^' . l:c_esc . '$', 'nw')]
+  if l:l1 == 0 || l:l2 <= l:l1 | return | endif
 
-  let [l:s, l:e] = ['%%% START_HEADER %%%', '%%% END_HEADER %%%']
-  let [l:l1, l:l2] = [search(l:s, 'nw'), search(l:e, 'nw')]
-  if expand('<afile>:e') ==# 'md' && l:l1 > 0 && l:l2 > l:l1
-    let l:body = escape(join(getline(l:l1 + 1, l:l2 - 1), "\n"), '\&~')
-    let l:pat = l:s . '\n\_.\{-}\n' . l:e
-    let l:rep = l:s . "\n" . l:body . "\n" . l:e
-    let l:files = filter(glob(expand('%:p:h') . '/*.md', 0, 1),
-          \ 'v:val !=# expand("%:p")')
-    for l:f in l:files
-      let l:old = join(readfile(l:f), "\n")
-      let l:new = substitute(l:old, l:pat, l:rep, 'g')
+  let l:body = join(getline(l:l1 + 1, l:l2 - 1), "\n")
+  let l:pat = '\(^\|' . "\n" . '\)\zs' . l:o_esc . '\n\_.\{-}\n'
+        \ . l:c_esc . '\ze\($\|' . "\n" . '\)'
+  let l:rep = escape(l:open . "\n" . l:body . "\n" . l:close, '\&~')
+
+  for l:f in filter(glob(a:dir . '/*.md', 0, 1), 'v:val !=# a:cur')
+    let l:old = join(readfile(l:f), "\n")
+    let l:new = substitute(l:old, l:pat, l:rep, 'g')
+    if l:new !=# l:old
+      call writefile(split(l:new, "\n", 1), l:f, 'b')
+    endif
+  endfor
+endfunction
+
+" --- 2. Single-Source File Transclusion (<!-- include: ... -->) ---
+function! ExpandIncludes(text, dir) abort
+  let l:pat = '<!-- include: \([^ >]\+\) -->\n\_.\{-}\n<!-- endinclude -->'
+  let l:res = a:text
+  let l:pos = 0
+  while 1
+    let l:m = matchlist(l:res, l:pat, l:pos)
+    if empty(l:m) | break | endif
+    let l:full = get(l:m, 0)
+    let l:file = get(l:m, 1)
+    let l:inc = a:dir . '/' . l:file
+    if filereadable(l:inc)
+      let l:body = join(readfile(l:inc), "\n")
+      let l:rep = '<!-- include: ' . l:file . " -->\n" . l:body
+            \ . "\n<!-- endinclude -->"
+      let l:idx = match(l:res, l:pat, l:pos)
+      let l:res = strpart(l:res, 0, l:idx) . l:rep
+            \ . strpart(l:res, l:idx + strlen(l:full))
+      let l:pos = l:idx + strlen(l:rep)
+    else
+      let l:pos = match(l:res, l:pat, l:pos) + strlen(l:full)
+    endif
+  endwhile
+  return l:res
+endfunction
+
+function! PushWikiIncludes(cur, dir, name) abort
+  let l:tag = '<!-- include: ' . a:name . ' -->'
+  for l:f in filter(glob(a:dir . '/*.md', 0, 1), 'v:val !=# a:cur')
+    let l:old = join(readfile(l:f), "\n")
+    if stridx(l:old, l:tag) != -1
+      let l:new = ExpandIncludes(l:old, a:dir)
       if l:new !=# l:old
         call writefile(split(l:new, "\n", 1), l:f, 'b')
       endif
-    endfor
+    endif
+  endfor
+endfunction
+
+" --- 3. OneDrive Save Coordinator ---
+function! WriteOneDriveFile() abort
+  if &readonly | echoerr "E45: 'readonly' option is set" | return | endif
+
+  let l:cur = expand('<afile>:p')
+  let l:dir = expand('<afile>:p:h')
+  let l:is_md = (expand('<afile>:e') ==# 'md')
+  let l:text = join(getline(1, '$'), "\n")
+
+  if l:is_md
+    let l:exp = ExpandIncludes(l:text, l:dir)
+    if l:exp !=# l:text
+      let l:text = l:exp
+      call setline(1, split(l:text, "\n", 1))
+    endif
   endif
-  silent! checktime
+
+  let l:eof = (&eol || !&bin ? [''] : [])
+  call writefile(split(l:text, "\n", 1) + l:eof, l:cur, 'b')
+  setlocal nomodified
+
+  if l:is_md
+    call SyncWikiHeader(l:cur, l:dir)
+    call PushWikiIncludes(l:cur, l:dir, expand('<afile>:t'))
+  endif
 endfunction
 
 augroup FixOneDrive
