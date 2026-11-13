@@ -75,22 +75,20 @@ endif
 " Save automatically on text changes or insert leave
 " autocmd TextChanged,InsertLeave * silent! wall
 
-augroup FixOneDrive
-  autocmd!
-  autocmd BufWriteCmd ~/OneDrive/*
-        \ if &readonly | echoerr "E45: 'readonly' option is set" | else |
-        \   call writefile(getline(1, '$') + (&eol || !&bin ? [''] : []),
-        \     expand('<afile>:p'), 'b') | setlocal nomodified | silent! checktime |
-        \ endif
-augroup END
+"augroup FixOneDrive
+  "autocmd!
+  "autocmd BufWriteCmd ~/OneDrive/*
+        "\ if &readonly | echoerr "E45: 'readonly' option is set" | else |
+        "\   call writefile(getline(1, '$') + (&eol || !&bin ? [''] : []),
+        "\     expand('<afile>:p'), 'b') | setlocal nomodified | silent! checktime |
+        "\ endif
+"augroup END
 
 "Vim Wiki
 let g:vimwiki_list = [{'path': '~/OneDrive/Documents/notes/', 'syntax': 'markdown', 'ext': '.md'}]
 let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
-"nmap <C-l> <Plug>VimwikiGoToNextHeader
-"nmap <C-h> <Plug>VimwikiGoToPrevHeader
-"nmap <Leader>wn <Plug>VimwikiNextLink
 let g:vimwiki_autowriteall = 0
+let g:vimwiki_key_mappings = { 'links': 0 }
 "
 function! SafeVimwikiFix()
   silent! nunmap <buffer> <CR>
@@ -383,3 +381,83 @@ function! SmoothBufJump(dir)
 endfunction
 nnoremap <silent> H :call SmoothBufJump('H')<CR>
 nnoremap <silent> L :call SmoothBufJump('L')<CR>
+
+"function! SyncWikiHeader()
+  "let l:s_tag = '%%% START_HEADER %%%'
+  "let l:e_tag = '%%% END_HEADER %%%'
+  "let l:start = search(l:s_tag, 'nw')
+  "let l:end = search(l:e_tag, 'nw')
+  "if l:start == 0 || l:end == 0 || l:end <= l:start
+    "return
+  "endif
+
+  "let l:lines = getline(l:start + 1, l:end - 1)
+  "let l:body = escape(join(l:lines, "\n"), '\&~')
+  "let l:pat = l:s_tag . '\n\_.\{-}\n' . l:e_tag
+  "let l:rep = l:s_tag . "\n" . l:body . "\n" . l:e_tag
+
+  "let l:current = expand('%:p')
+  "for l:file in glob(expand('%:p:h') . '/*.md', 0, 1)
+    "if l:file !=# l:current
+      "let l:content = join(readfile(l:file), "\n")
+      "let l:updated = substitute(l:content, l:pat, l:rep, 'g')
+      "if l:updated !=# l:content
+        "call writefile(split(l:updated, "\n", 1), l:file, 'b')
+      "endif
+    "endif
+  "endfor
+  "silent! checktime
+"endfunction
+
+"function! WriteOneDriveFile()
+  "if &readonly
+    "echoerr "E45: 'readonly' option is set"
+    "return
+  "endif
+
+  "let l:eof = (&eol || !&bin ? [''] : [])
+  "call writefile(getline(1, '$') + l:eof, expand('<afile>:p'), 'b')
+  "setlocal nomodified
+  "silent! checktime
+
+  "if expand('<afile>:e') ==# 'md'
+    "call SyncWikiHeader()
+  "endif
+"endfunction
+
+"augroup FixOneDrive
+  "autocmd!
+  "autocmd BufWriteCmd ~/OneDrive/* call WriteOneDriveFile()
+"augroup END
+
+
+function! WriteOneDriveFile() abort
+  if &readonly | echoerr "E45: 'readonly' option is set" | return | endif
+
+  let l:eof = (&eol || !&bin ? [''] : [])
+  call writefile(getline(1, '$') + l:eof, expand('<afile>:p'), 'b')
+  setlocal nomodified
+
+  let [l:s, l:e] = ['%%% START_HEADER %%%', '%%% END_HEADER %%%']
+  let [l:l1, l:l2] = [search(l:s, 'nw'), search(l:e, 'nw')]
+  if expand('<afile>:e') ==# 'md' && l:l1 > 0 && l:l2 > l:l1
+    let l:body = escape(join(getline(l:l1 + 1, l:l2 - 1), "\n"), '\&~')
+    let l:pat = l:s . '\n\_.\{-}\n' . l:e
+    let l:rep = l:s . "\n" . l:body . "\n" . l:e
+    let l:files = filter(glob(expand('%:p:h') . '/*.md', 0, 1),
+          \ 'v:val !=# expand("%:p")')
+    for l:f in l:files
+      let l:old = join(readfile(l:f), "\n")
+      let l:new = substitute(l:old, l:pat, l:rep, 'g')
+      if l:new !=# l:old
+        call writefile(split(l:new, "\n", 1), l:f, 'b')
+      endif
+    endfor
+  endif
+  silent! checktime
+endfunction
+
+augroup FixOneDrive
+  autocmd!
+  autocmd BufWriteCmd ~/OneDrive/* call WriteOneDriveFile()
+augroup END
