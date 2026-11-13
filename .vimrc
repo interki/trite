@@ -24,11 +24,8 @@ if empty(glob('~/.vim/autoload/plug.vim'))
     \ https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
   autocmd VimEnter * PlugInstall --sync | source $MYVIMRC
 endif
-
 call plug#begin('~/.vim/plugged')
 
-"Plug 'vim-airline/vim-airline'
-"Plug 'vim-airline/vim-airline-themes'
 Plug 'scrooloose/nerdcommenter'
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
@@ -38,17 +35,9 @@ Plug 'junegunn/fzf.vim'
 Plug 'vimwiki/vimwiki' 
 Plug 'mcchrish/nnn.vim'
 Plug 'scwood/vim-hybrid'
-Plug 'joshdick/onedark.vim'
-
-"Plug 'wfxr/minimap.vim'
-Plug 'Jimeno0/vim-chito'
-Plug 'cocopon/iceberg.vim'
-Plug 'arzg/vim-substrata'
-Plug 'arcticicestudio/nord-vim' 
-Plug 'rakr/vim-one'
-Plug 'https://gitlab.com/yorickpeterse/vim-paper.git'
-Plug 'https://github.com/preservim/vim-pencil'
-Plug 'https://github.com/chrisbra/recover.vim'
+"Plug 'https://gitlab.com/yorickpeterse/vim-paper.git'
+"Plug 'https://github.com/preservim/vim-pencil'
+"Plug 'https://github.com/chrisbra/recover.vim'
 Plug 'justinmk/vim-sneak'
 "Plug 'romainl/vim-cool'
 
@@ -76,7 +65,6 @@ if has('gui_running')
 	highlight Normal guibg=#e3e3e3
 	"set guicursor=a:blinkwait1000-blinkon1000-blinkoff1000
 	set guicursor=a:blinkon0
-
 	"set noerrorbells
 	"set visualbell 
 	"set t_vb=
@@ -87,9 +75,14 @@ endif
 " Save automatically on text changes or insert leave
 " autocmd TextChanged,InsertLeave * silent! wall
 
-"Fix Onedrive
-autocmd BufWritePre * checktime
-autocmd FileChangedShell * if v:fcs_reason == 'time' | let v:fcs_choice = '' | endif
+augroup FixOneDrive
+  autocmd!
+  autocmd BufWriteCmd ~/OneDrive/*
+        \ if &readonly | echoerr "E45: 'readonly' option is set" | else |
+        \   call writefile(getline(1, '$') + (&eol || !&bin ? [''] : []),
+        \     expand('<afile>:p'), 'b') | setlocal nomodified | silent! checktime |
+        \ endif
+augroup END
 
 "Vim Wiki
 let g:vimwiki_list = [{'path': '~/OneDrive/Documents/notes/', 'syntax': 'markdown', 'ext': '.md'}]
@@ -98,7 +91,7 @@ let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown'
 "nmap <C-h> <Plug>VimwikiGoToPrevHeader
 "nmap <Leader>wn <Plug>VimwikiNextLink
 let g:vimwiki_autowriteall = 0
-
+"
 function! SafeVimwikiFix()
   silent! nunmap <buffer> <CR>
   silent! vunmap <buffer> <CR>
@@ -118,7 +111,8 @@ function! ToggleSpellCheck()
     echo "Spellcheck OFF"
   endif
 endfunction
-nnoremap <silent> <Leader>S :call ToggleSpellCheck()<CR>
+"nnoremap <silent> <Leader>S :call ToggleSpellCheck()<CR>
+nnoremap <silent> <F2> :call ToggleSpellCheck()<CR>
 
 "Toggle location list
 function! ToggleLocationList()
