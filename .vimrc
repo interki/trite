@@ -194,8 +194,22 @@ function! VoicePaste()
 endfunction
 nnoremap <silent> <Leader>V :call VoicePaste()<CR>
 
-command! -bang -nargs=? -complete=dir Buffers
-  \ call fzf#vim#buffers({'options': ['--exact', '--tiebreak=index']}, <bang>0)
+"command! -bang -nargs=? -complete=dir Buffers
+  "\ call fzf#vim#buffers({'options': ['--exact', '--tiebreak=index']}, <bang>0)
+
+function! s:FzfMruBuffers() abort
+  let l:bufs = getbufinfo({'buflisted': 1})
+  call sort(l:bufs, {a, b -> b.lastused - a.lastused})
+  let l:lines = map(l:bufs, {_, v -> fnamemodify(v.name, ':~:.')})
+  call filter(l:lines, {_, v -> !empty(v)})
+  return l:lines
+endfunction
+command! -bang Buffers call fzf#run(fzf#wrap({
+      \ 'source': s:FzfMruBuffers(),
+      \ 'sink': 'buffer',
+      \ 'options': ['--exact', '--delimiter=/', '--nth=-1', '--query=^', '--tiebreak=index']
+      \ }, <bang>0))
+
 autocmd FileType markdown,vimwiki syntax sync minlines=40 maxlines=150
 "autocmd FileType markdown,vimwiki syntax clear
 
