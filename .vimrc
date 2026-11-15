@@ -57,7 +57,8 @@ set thesaurus+=/home/think/.vim/thesaurus/mthesaur.txt
 set ignorecase
 set smartcase
 set tw=80
-set fo=aw2tq  
+"set fo=aw2tq  
+set fo+=awt  
 
 if has('gui_running')
 	set guifont=Liberation\ Mono\ 12
@@ -150,7 +151,7 @@ endfunction
 nnoremap <leader>i :call ToggleLimelightWithKeys()<CR>
 
 iabbrev poeple people
-nnoremap <silent> <Leader>b :Buffers<CR>
+nnoremap <silent> <Leader>z :Buffers<CR>
 nnoremap <silent> <Leader>d :w !diff % -<CR>
 nnoremap <silent> <Leader>o O<CR><UP>
 nnoremap <silent> <Space> o<Esc>
@@ -211,159 +212,159 @@ augroup VimwikiSearchRefinement | autocmd!
   autocmd QuickFixCmdPost l* lwindow | wincmd j
 augroup END
 
-"function! ZigZagInvertSelection() range
-		"let l:save_cursor = getpos('.')
-		"let l:start = a:firstline
-		"let l:end = a:lastline
-		
-		"let l:sw = shiftwidth()
-		"let l:indent_char = &expandtab ? ' ' : '	'
-		
-		"" Step 1: Snapshot original indents and find the true structural baseline
-		"let l:min_indent = -1
-		"let l:orig_indents = []
-		
-		"let l:current_line = l:start
-		"while l:current_line <= l:end
-				"let l:line_text = getline(l:current_line)
-				"let l:ind = (l:line_text =~ '^\s*$') ? -1 : indent(l:current_line)
-				"call add(l:orig_indents, l:ind)
-				"if l:ind != -1 && (l:min_indent == -1 || l:ind < l:min_indent)
-						"let l:min_indent = l:ind
-				"endif
-				"let l:current_line += 1
-		"endwhile
-
-		"if l:min_indent == -1 | return | endif
-
-		"" Step 2: Safely determine global layout state (A or B) using the completed snapshot
-		"let l:is_state_b = 0
-		"for l:ind in l:orig_indents
-				"if l:ind == l:min_indent + l:sw | let l:is_state_b = 1 | break | endif
-				"if l:ind == l:min_indent | break | endif
-		"endfor
-
-		"" Step 3: Traverse and apply the mathematical toggle rules using the snapshot
-		"let l:active_parent_is_p1 = 1
-		"let l:idx = 0
-		"let l:current_line = l:start
-		
-		"while l:current_line <= l:end
-				"let l:ind = l:orig_indents[l:idx]
-				"if l:ind != -1
-						"" Track active parent tree context safely using original unmutated values
-						"if l:ind == l:min_indent
-								"let l:active_parent_is_p1 = !l:is_state_b
-						"elseif l:ind == l:min_indent + l:sw
-								"let l:active_parent_is_p1 = l:is_state_b
-						"endif
-
-						"" Execute perfectly mirrored structural shifts
-						"if l:active_parent_is_p1
-								"let l:new_size = l:ind + (l:is_state_b ? -l:sw : l:sw)
-						"else
-								"let l:new_size = (l:ind <= l:min_indent + l:sw) ? (l:ind + (l:is_state_b ? l:sw : -l:sw)) : l:ind
-						"endif
-
-						"" Commit text change directly to the file buffer
-						"let l:clean_text = substitute(getline(l:current_line), '^\s*', '', '')
-						"let l:new_leading = repeat(l:indent_char, &expandtab ? l:new_size : (l:new_size / l:sw))
-						"call setline(l:current_line, l:new_leading . l:clean_text)
-				"endif
-				"let l:idx += 1
-				"let l:current_line += 1
-		"endwhile
-		
-		"call setpos('.', l:save_cursor)
-"endfunction
-
-"xnoremap Z :call ZigZagInvertSelection()<CR>
-
 function! ZigZagInvertSelection() range
-    " --- EFFICIENCY BLOCK START ---
-    let l:save_lazy = &lazyredraw
-    let l:save_ei = &eventignore
-    setlocal lazyredraw
-    setlocal eventignore=all
-    silent! undojoin
-    " --- EFFICIENCY BLOCK END ---
+		let l:save_cursor = getpos('.')
+		let l:start = a:firstline
+		let l:end = a:lastline
+		
+		let l:sw = shiftwidth()
+		let l:indent_char = &expandtab ? ' ' : '	'
+		
+		" Step 1: Snapshot original indents and find the true structural baseline
+		let l:min_indent = -1
+		let l:orig_indents = []
+		
+		let l:current_line = l:start
+		while l:current_line <= l:end
+				let l:line_text = getline(l:current_line)
+				let l:ind = (l:line_text =~ '^\s*$') ? -1 : indent(l:current_line)
+				call add(l:orig_indents, l:ind)
+				if l:ind != -1 && (l:min_indent == -1 || l:ind < l:min_indent)
+						let l:min_indent = l:ind
+				endif
+				let l:current_line += 1
+		endwhile
 
-    let l:save_cursor = getpos('.')
-    let l:start = a:firstline
-    let l:end = a:lastline
-    
-    let l:sw = shiftwidth()
-    let l:indent_char = &expandtab ? ' ' : '	'
-    
-    " Step 1: Snapshot original indents and find the true structural baseline
-    let l:min_indent = -1
-    let l:orig_indents = []
-    
-    let l:current_line = l:start
-    while l:current_line <= l:end
-        let l:line_text = getline(l:current_line)
-        let l:ind = (l:line_text =~ '^\s*$') ? -1 : indent(l:current_line)
-        call add(l:orig_indents, l:ind)
-        if l:ind != -1 && (l:min_indent == -1 || l:ind < l:min_indent)
-            let l:min_indent = l:ind
-        endif
-        let l:current_line += 1
-    endwhile
+		if l:min_indent == -1 | return | endif
 
-    if l:min_indent == -1
-        " --- CLEANUP ON EARLY EXIT ---
-        let &lazyredraw = l:save_lazy
-        let &eventignore = l:save_ei
-        return 
-    endif
+		" Step 2: Safely determine global layout state (A or B) using the completed snapshot
+		let l:is_state_b = 0
+		for l:ind in l:orig_indents
+				if l:ind == l:min_indent + l:sw | let l:is_state_b = 1 | break | endif
+				if l:ind == l:min_indent | break | endif
+		endfor
 
-    " Step 2: Safely determine global layout state (A or B) using the completed snapshot
-    let l:is_state_b = 0
-    for l:ind in l:orig_indents
-        if l:ind == l:min_indent + l:sw | let l:is_state_b = 1 | break | endif
-        if l:ind == l:min_indent | break | endif
-    endfor
+		" Step 3: Traverse and apply the mathematical toggle rules using the snapshot
+		let l:active_parent_is_p1 = 1
+		let l:idx = 0
+		let l:current_line = l:start
+		
+		while l:current_line <= l:end
+				let l:ind = l:orig_indents[l:idx]
+				if l:ind != -1
+						" Track active parent tree context safely using original unmutated values
+						if l:ind == l:min_indent
+								let l:active_parent_is_p1 = !l:is_state_b
+						elseif l:ind == l:min_indent + l:sw
+								let l:active_parent_is_p1 = l:is_state_b
+						endif
 
-    " Step 3: Traverse and apply the mathematical toggle rules using the snapshot
-    let l:active_parent_is_p1 = 1
-    let l:idx = 0
-    let l:current_line = l:start
-    
-    while l:current_line <= l:end
-        let l:ind = l:orig_indents[l:idx]
-        if l:ind != -1
-            " Track active parent tree context safely using original unmutated values
-            if l:ind == l:min_indent
-                let l:active_parent_is_p1 = !l:is_state_b
-            elseif l:ind == l:min_indent + l:sw
-                let l:active_parent_is_p1 = l:is_state_b
-            endif
+						" Execute perfectly mirrored structural shifts
+						if l:active_parent_is_p1
+								let l:new_size = l:ind + (l:is_state_b ? -l:sw : l:sw)
+						else
+								let l:new_size = (l:ind <= l:min_indent + l:sw) ? (l:ind + (l:is_state_b ? l:sw : -l:sw)) : l:ind
+						endif
 
-            " Execute perfectly mirrored structural shifts
-            if l:active_parent_is_p1
-                let l:new_size = l:ind + (l:is_state_b ? -l:sw : l:sw)
-            else
-                let l:new_size = (l:ind <= l:min_indent + l:sw) ? (l:ind + (l:is_state_b ? l:sw : -l:sw)) : l:ind
-            endif
-
-            " Commit text change directly to the file buffer
-            let l:clean_text = substitute(getline(l:current_line), '^\s*', '', '')
-            let l:new_leading = repeat(l:indent_char, &expandtab ? l:new_size : (l:new_size / l:sw))
-            call setline(l:current_line, l:new_leading . l:clean_text)
-        endif
-        let l:idx += 1
-        " --- RESTORE THE SYSTEM ITERATOR LOOP ---
-        let l:current_line += 1
-    endwhile
-    
-    call setpos('.', l:save_cursor)
-
-    " --- EFFICIENCY RESTORE START ---
-    let &lazyredraw = l:save_lazy
-    let &eventignore = l:save_ei
-    " --- EFFICIENCY RESTORE END ---
+						" Commit text change directly to the file buffer
+						let l:clean_text = substitute(getline(l:current_line), '^\s*', '', '')
+						let l:new_leading = repeat(l:indent_char, &expandtab ? l:new_size : (l:new_size / l:sw))
+						call setline(l:current_line, l:new_leading . l:clean_text)
+				endif
+				let l:idx += 1
+				let l:current_line += 1
+		endwhile
+		
+		call setpos('.', l:save_cursor)
 endfunction
-vnoremap <silent> <Leader>z :call ZigZagInvertSelection()<CR>
+
+xnoremap Z :call ZigZagInvertSelection()<CR>
+
+"function! ZigZagInvertSelection() range
+    "" --- EFFICIENCY BLOCK START ---
+    "let l:save_lazy = &lazyredraw
+    "let l:save_ei = &eventignore
+    "setlocal lazyredraw
+    "setlocal eventignore=all
+    "silent! undojoin
+    "" --- EFFICIENCY BLOCK END ---
+
+    "let l:save_cursor = getpos('.')
+    "let l:start = a:firstline
+    "let l:end = a:lastline
+    
+    "let l:sw = shiftwidth()
+    "let l:indent_char = &expandtab ? ' ' : '	'
+    
+    "" Step 1: Snapshot original indents and find the true structural baseline
+    "let l:min_indent = -1
+    "let l:orig_indents = []
+    
+    "let l:current_line = l:start
+    "while l:current_line <= l:end
+        "let l:line_text = getline(l:current_line)
+        "let l:ind = (l:line_text =~ '^\s*$') ? -1 : indent(l:current_line)
+        "call add(l:orig_indents, l:ind)
+        "if l:ind != -1 && (l:min_indent == -1 || l:ind < l:min_indent)
+            "let l:min_indent = l:ind
+        "endif
+        "let l:current_line += 1
+    "endwhile
+
+    "if l:min_indent == -1
+        "" --- CLEANUP ON EARLY EXIT ---
+        "let &lazyredraw = l:save_lazy
+        "let &eventignore = l:save_ei
+        "return 
+    "endif
+
+    "" Step 2: Safely determine global layout state (A or B) using the completed snapshot
+    "let l:is_state_b = 0
+    "for l:ind in l:orig_indents
+        "if l:ind == l:min_indent + l:sw | let l:is_state_b = 1 | break | endif
+        "if l:ind == l:min_indent | break | endif
+    "endfor
+
+    "" Step 3: Traverse and apply the mathematical toggle rules using the snapshot
+    "let l:active_parent_is_p1 = 1
+    "let l:idx = 0
+    "let l:current_line = l:start
+    
+    "while l:current_line <= l:end
+        "let l:ind = l:orig_indents[l:idx]
+        "if l:ind != -1
+            "" Track active parent tree context safely using original unmutated values
+            "if l:ind == l:min_indent
+                "let l:active_parent_is_p1 = !l:is_state_b
+            "elseif l:ind == l:min_indent + l:sw
+                "let l:active_parent_is_p1 = l:is_state_b
+            "endif
+
+            "" Execute perfectly mirrored structural shifts
+            "if l:active_parent_is_p1
+                "let l:new_size = l:ind + (l:is_state_b ? -l:sw : l:sw)
+            "else
+                "let l:new_size = (l:ind <= l:min_indent + l:sw) ? (l:ind + (l:is_state_b ? l:sw : -l:sw)) : l:ind
+            "endif
+
+            "" Commit text change directly to the file buffer
+            "let l:clean_text = substitute(getline(l:current_line), '^\s*', '', '')
+            "let l:new_leading = repeat(l:indent_char, &expandtab ? l:new_size : (l:new_size / l:sw))
+            "call setline(l:current_line, l:new_leading . l:clean_text)
+        "endif
+        "let l:idx += 1
+        "" --- RESTORE THE SYSTEM ITERATOR LOOP ---
+        "let l:current_line += 1
+    "endwhile
+    
+    "call setpos('.', l:save_cursor)
+
+    "" --- EFFICIENCY RESTORE START ---
+    "let &lazyredraw = l:save_lazy
+    "let &eventignore = l:save_ei
+    "" --- EFFICIENCY RESTORE END ---
+"endfunction
+"vnoremap <silent> <Leader>z :call ZigZagInvertSelection()<CR>
 
 "traverse buffers cronologically
 function! SmoothBufJump(dir)
@@ -382,6 +383,7 @@ endfunction
 nnoremap <silent> H :call SmoothBufJump('H')<CR>
 nnoremap <silent> L :call SmoothBufJump('L')<CR>
 
+""Header%
 "function! WriteOneDriveFile() abort
 	"if &readonly | echoerr "E45: 'readonly' option is set" | return | endif
 	"let l:eof = (&eol || !&bin ? [''] : [])
@@ -416,11 +418,7 @@ nnoremap <silent> L :call SmoothBufJump('L')<CR>
 	"autocmd BufWriteCmd ~/OneDrive/* call WriteOneDriveFile()
 "augroup END
 
-" ============================================================================
-" Vimwiki Header Sync, File Includes & OneDrive Save Fix
-" ============================================================================
-
-" --- 1. Peer-to-Peer Header Sync (\===% ... \===%%) ---
+"Header + Include +Onedrive
 function! SyncWikiHeader(cur, dir) abort
   let l:open = '\' . repeat('=', 50) . '%'
   let l:close = '\' . repeat('=', 49) . '%%'
@@ -515,3 +513,44 @@ augroup FixOneDrive
   autocmd!
   autocmd BufWriteCmd ~/OneDrive/* call WriteOneDriveFile()
 augroup END
+
+""fast list ordered
+"function! s:MruBuffers(ArgLead, CmdLine, CursorPos) abort
+	"let l:bufs = getbufinfo({'buflisted': 1})
+	"call sort(l:bufs, {a, b -> b.lastused - a.lastused})
+	"return map(l:bufs, {_, v -> fnamemodify(v.name, ':~:.')})
+"endfunction
+"command! -nargs=1 -complete=customlist,s:MruBuffers B buffer <args>
+"set wildcharm=<C-Z>
+"set wildoptions=pum
+"nnoremap <leader>b :B<Space><C-Z>
+
+""with entry for match
+"set wildoptions=pum
+"function! s:MruBuffers(ArgLead, CmdLine, CursorPos) abort
+	"let l:bufs = getbufinfo({'buflisted': 1})
+	"call sort(l:bufs, {a, b -> b.lastused - a.lastused})
+	"let l:names = map(l:bufs, {_, v -> fnamemodify(v.name, ':~:.')})
+	"if !empty(a:ArgLead)
+		"call filter(l:names, {_, v -> fnamemodify(v, ':t') =~? '^' . escape(a:ArgLead, '\.^$*[]~')})
+	"endif
+	"return l:names
+"endfunction
+"command! -nargs=1 -complete=customlist,s:MruBuffers B buffer <args>
+"nnoremap <leader>b :B<Space>
+
+"combined, 2 binds
+set wildoptions=pum
+set wildcharm=<C-Z>
+function! s:MruBuffers(ArgLead, CmdLine, CursorPos) abort
+  let l:bufs = getbufinfo({'buflisted': 1})
+  call sort(l:bufs, {a, b -> b.lastused - a.lastused})
+  let l:names = map(l:bufs, {_, v -> fnamemodify(v.name, ':~:.')})
+  if !empty(a:ArgLead)
+    call filter(l:names, {_, v -> fnamemodify(v, ':t') =~? '^' . escape(a:ArgLead, '\.^$*[]~')})
+  endif
+  return l:names
+endfunction
+command! -nargs=1 -complete=customlist,s:MruBuffers B buffer <args>
+nnoremap <leader>b :B<Space>
+nnoremap <leader>m :B<Space><C-Z>
