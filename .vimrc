@@ -32,7 +32,7 @@ Plug 'junegunn/limelight.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 "Plug '/usr/bin/fzf'
-Plug 'vimwiki/vimwiki' 
+"Plug 'vimwiki/vimwiki' 
 Plug 'mcchrish/nnn.vim'
 Plug 'scwood/vim-hybrid'
 "Plug 'https://gitlab.com/yorickpeterse/vim-paper.git'
@@ -85,20 +85,37 @@ endif
         "\ endif
 "augroup END
 
-"Vim Wiki
-let g:vimwiki_list = [{'path': '~/OneDrive/Documents/notes/', 'syntax': 'markdown', 'ext': '.md'}]
-let g:vimwiki_ext2syntax = {'.md': 'markdown', '.markdown': 'markdown', '.mdown': 'markdown'}
-let g:vimwiki_autowriteall = 0
-let g:vimwiki_key_mappings = { 'links': 0 }
-"
-function! SafeVimwikiFix()
-  silent! nunmap <buffer> <CR>
-  silent! vunmap <buffer> <CR>
-  nmap <buffer> <Leader>g <Plug>VimwikiFollowLink
+"wiki
+nnoremap <leader>ww :edit /home/think/OneDrive/Documents/notes/index.md<CR>
+
+function! MakeMdLink(text) abort
+  let path = expand('%:p:h') . '/' . a:text . '.md'
+  call mkdir(fnamemodify(path, ':h'), 'p')
+  call writefile([], path, 'a')
+  return '[' . a:text . '](' . a:text . ')'
 endfunction
-augroup VimwikiEnterFix
+
+" Markdown settings, syntax cleanup & mappings
+augroup MarkdownCustom
   autocmd!
-  autocmd FileType vimwiki call SafeVimwikiFix()
+  autocmd BufWritePre * call mkdir(expand('<afile>:p:h'), 'p')
+  autocmd Syntax markdown silent! syntax clear
+        \ htmlTag htmlEndTag htmlError markdownError markdownAutomaticLink
+  autocmd FileType markdown setlocal path=.,** suffixesadd+=.md isfname-=(,),[,]
+  autocmd FileType markdown nnoremap <buffer> <expr> <leader>g
+        \ 'ciw' . MakeMdLink(expand('<cword>')) . "\<Esc>h"
+  autocmd FileType markdown vnoremap <buffer> <leader>g
+        \ c<C-r>=MakeMdLink(@")<CR><Esc>h
+augroup END
+
+" Wiki search using location list (without jumping to first match)
+command! -nargs=1 WikiSearch
+      \ silent! lvimgrep /<args>/j /home/think/OneDrive/Documents/notes/**/*.md
+nnoremap <leader>ws :WikiSearch<Space>
+augroup WikiSearchRefinement
+  autocmd!
+  autocmd FileType qf nnoremap <buffer> <CR> <CR>:lclose<CR>
+  autocmd QuickFixCmdPost l* lwindow | wincmd j
 augroup END
 
 "Toggle spellchecking
@@ -194,50 +211,30 @@ function! VoicePaste()
 endfunction
 nnoremap <silent> <Leader>V :call VoicePaste()<CR>
 
-"command! -bang -nargs=? -complete=dir Buffers
-  "\ call fzf#vim#buffers({'options': ['--exact', '--tiebreak=index']}, <bang>0)
-
 function! s:FzfMruBuffers() abort
-  let l:bufs = getbufinfo({'buflisted': 1})
-  call sort(l:bufs, {a, b -> b.lastused - a.lastused})
-  let l:lines = map(l:bufs, {_, v -> fnamemodify(v.name, ':~:.')})
-  call filter(l:lines, {_, v -> !empty(v)})
-  return l:lines
+	let l:bufs = getbufinfo({'buflisted': 1})
+	call sort(l:bufs, {a, b -> b.lastused - a.lastused})
+	let l:lines = map(l:bufs, {_, v -> fnamemodify(v.name, ':~:.')})
+	call filter(l:lines, {_, v -> !empty(v)})
+	return l:lines
 endfunction
 command! -bang Buffers call fzf#run(fzf#wrap({
-      \ 'source': s:FzfMruBuffers(),
-      \ 'sink': 'buffer',
-      \ 'options': ['--exact', '--delimiter=/', '--nth=-1', '--query=^', '--tiebreak=index']
-      \ }, <bang>0))
+			\ 'source': s:FzfMruBuffers(),
+			\ 'sink': 'buffer',
+			\ 'options': ['--exact', '--delimiter=/', '--nth=-1', '--query=^', '--tiebreak=index']
+			\ }, <bang>0))
 
 autocmd FileType markdown,vimwiki syntax sync minlines=40 maxlines=150
-"autocmd FileType markdown,vimwiki syntax clear
-
-"augroup VimwikiSearchRefinement
-	"autocmd!
-	"" 1. Map Enter to select and close inside the location list
-	"autocmd FileType qf nnoremap <buffer> <CR> <CR>:lclose<CR>
-	"" 2. Auto-open the list on search and jump the cursor into it
-	"autocmd QuickFixCmdPost l* lwindow | call timer_start(5, {-> execute('if &filetype != "quickfix" | wincmd j | endif')})
-"augroup END
-
-augroup VimwikiSearchRefinement | autocmd!
-  autocmd FileType qf nnoremap <buffer> <CR> <CR>:lclose<CR>
-  autocmd QuickFixCmdPost l* lwindow | wincmd j
-augroup END
 
 function! ZigZagInvertSelection() range
 		let l:save_cursor = getpos('.')
 		let l:start = a:firstline
 		let l:end = a:lastline
-		
 		let l:sw = shiftwidth()
 		let l:indent_char = &expandtab ? ' ' : '	'
-		
 		" Step 1: Snapshot original indents and find the true structural baseline
 		let l:min_indent = -1
 		let l:orig_indents = []
-		
 		let l:current_line = l:start
 		while l:current_line <= l:end
 				let l:line_text = getline(l:current_line)
@@ -248,21 +245,19 @@ function! ZigZagInvertSelection() range
 				endif
 				let l:current_line += 1
 		endwhile
-
 		if l:min_indent == -1 | return | endif
-
-		" Step 2: Safely determine global layout state (A or B) using the completed snapshot
+		" Step 2: Safely determine global layout state (A or B) using the completed 
+		" snapshot
 		let l:is_state_b = 0
 		for l:ind in l:orig_indents
 				if l:ind == l:min_indent + l:sw | let l:is_state_b = 1 | break | endif
 				if l:ind == l:min_indent | break | endif
 		endfor
-
-		" Step 3: Traverse and apply the mathematical toggle rules using the snapshot
+		" Step 3: Traverse and apply the mathematical toggle rules using the 
+		" snapshot
 		let l:active_parent_is_p1 = 1
 		let l:idx = 0
 		let l:current_line = l:start
-		
 		while l:current_line <= l:end
 				let l:ind = l:orig_indents[l:idx]
 				if l:ind != -1
@@ -272,14 +267,12 @@ function! ZigZagInvertSelection() range
 						elseif l:ind == l:min_indent + l:sw
 								let l:active_parent_is_p1 = l:is_state_b
 						endif
-
 						" Execute perfectly mirrored structural shifts
 						if l:active_parent_is_p1
 								let l:new_size = l:ind + (l:is_state_b ? -l:sw : l:sw)
 						else
 								let l:new_size = (l:ind <= l:min_indent + l:sw) ? (l:ind + (l:is_state_b ? l:sw : -l:sw)) : l:ind
 						endif
-
 						" Commit text change directly to the file buffer
 						let l:clean_text = substitute(getline(l:current_line), '^\s*', '', '')
 						let l:new_leading = repeat(l:indent_char, &expandtab ? l:new_size : (l:new_size / l:sw))
@@ -288,10 +281,8 @@ function! ZigZagInvertSelection() range
 				let l:idx += 1
 				let l:current_line += 1
 		endwhile
-		
 		call setpos('.', l:save_cursor)
 endfunction
-
 xnoremap Z :call ZigZagInvertSelection()<CR>
 
 "function! ZigZagInvertSelection() range
@@ -397,57 +388,19 @@ endfunction
 nnoremap <silent> H :call SmoothBufJump('H')<CR>
 nnoremap <silent> L :call SmoothBufJump('L')<CR>
 
-""Header%
-"function! WriteOneDriveFile() abort
-	"if &readonly | echoerr "E45: 'readonly' option is set" | return | endif
-	"let l:eof = (&eol || !&bin ? [''] : [])
-	"call writefile(getline(1, '$') + l:eof, expand('<afile>:p'), 'b')
-	"setlocal nomodified
-	"let l:open = '\' . repeat('=', 50) . '%'
-	"let l:close = '\' . repeat('=', 49) . '%%'
-	"let l:o_esc = '\V' . escape(l:open, '\') . '\m'
-	"let l:c_esc = '\V' . escape(l:close, '\') . '\m'
-	"let [l:l1, l:l2] = [search('^' . l:o_esc . '$', 'nw'),
-				"\ search('^' . l:c_esc . '$', 'nw')]
-	"if expand('<afile>:e') ==# 'md' && l:l1 > 0 && l:l2 > l:l1
-		"let l:body = join(getline(l:l1 + 1, l:l2 - 1), "\n")
-		"let l:pat = '\(^\|' . "\n" . '\)\zs' . l:o_esc . '\n\_.\{-}\n'
-					"\ . l:c_esc . '\ze\($\|' . "\n" . '\)'
-		"let l:rep = escape(l:open . "\n" . l:body . "\n" . l:close, '\&~')
-		"let l:cur = expand('<afile>:p')
-		"let l:files = filter(glob(expand('<afile>:p:h') . '/*.md', 0, 1),
-					"\ 'v:val !=# l:cur')
-		"for l:f in l:files
-			"let l:old = join(readfile(l:f), "\n")
-			"let l:new = substitute(l:old, l:pat, l:rep, 'g')
-			"if l:new !=# l:old
-				"call writefile(split(l:new, "\n", 1), l:f, 'b')
-			"endif
-		"endfor
-	"endif
-	"silent! checktime
-"endfunction
-"augroup FixOneDrive
-	"autocmd!
-	"autocmd BufWriteCmd ~/OneDrive/* call WriteOneDriveFile()
-"augroup END
-
-"Header + Include +Onedrive
+" --- 1. Shared Wiki Header Sync (Comment out safely anytime) ---
 function! SyncWikiHeader(cur, dir) abort
   let l:open = '\' . repeat('=', 50) . '%'
   let l:close = '\' . repeat('=', 49) . '%%'
   let l:o_esc = '\V' . escape(l:open, '\') . '\m'
   let l:c_esc = '\V' . escape(l:close, '\') . '\m'
-
   let [l:l1, l:l2] = [search('^' . l:o_esc . '$', 'nw'),
         \ search('^' . l:c_esc . '$', 'nw')]
   if l:l1 == 0 || l:l2 <= l:l1 | return | endif
-
   let l:body = join(getline(l:l1 + 1, l:l2 - 1), "\n")
   let l:pat = '\(^\|' . "\n" . '\)\zs' . l:o_esc . '\n\_.\{-}\n'
         \ . l:c_esc . '\ze\($\|' . "\n" . '\)'
   let l:rep = escape(l:open . "\n" . l:body . "\n" . l:close, '\&~')
-
   for l:f in filter(glob(a:dir . '/*.md', 0, 1), 'v:val !=# a:cur')
     let l:old = join(readfile(l:f), "\n")
     let l:new = substitute(l:old, l:pat, l:rep, 'g')
@@ -457,7 +410,7 @@ function! SyncWikiHeader(cur, dir) abort
   endfor
 endfunction
 
-" --- 2. Single-Source File Transclusion (<!-- include: ... -->) ---
+" --- 2. Single-Source File Transclusion (Comment out safely anytime) ---
 function! ExpandIncludes(text, dir) abort
   let l:pat = '<!-- include: \([^ >]\+\) -->\n\_.\{-}\n<!-- endinclude -->'
   let l:res = a:text
@@ -465,8 +418,7 @@ function! ExpandIncludes(text, dir) abort
   while 1
     let l:m = matchlist(l:res, l:pat, l:pos)
     if empty(l:m) | break | endif
-    let l:full = get(l:m, 0)
-    let l:file = get(l:m, 1)
+    let [l:full, l:file] = [get(l:m, 0), get(l:m, 1)]
     let l:inc = a:dir . '/' . l:file
     if filereadable(l:inc)
       let l:body = join(readfile(l:inc), "\n")
@@ -496,29 +448,27 @@ function! PushWikiIncludes(cur, dir, name) abort
   endfor
 endfunction
 
-" --- 3. OneDrive Save Coordinator ---
+" --- 3. OneDrive Save Coordinator (Comment out safely anytime) ---
 function! WriteOneDriveFile() abort
   if &readonly | echoerr "E45: 'readonly' option is set" | return | endif
-
-  let l:cur = expand('<afile>:p')
-  let l:dir = expand('<afile>:p:h')
+  let [l:cur, l:dir] = [expand('<afile>:p'), expand('<afile>:p:h')]
   let l:is_md = (expand('<afile>:e') ==# 'md')
   let l:text = join(getline(1, '$'), "\n")
-
-  if l:is_md
+  if l:is_md && exists('*ExpandIncludes')
     let l:exp = ExpandIncludes(l:text, l:dir)
     if l:exp !=# l:text
       let l:text = l:exp
       call setline(1, split(l:text, "\n", 1))
     endif
   endif
-
+  call mkdir(l:dir, 'p')
   let l:eof = (&eol || !&bin ? [''] : [])
   call writefile(split(l:text, "\n", 1) + l:eof, l:cur, 'b')
   setlocal nomodified
-
-  if l:is_md
+  if l:is_md && exists('*SyncWikiHeader')
     call SyncWikiHeader(l:cur, l:dir)
+  endif
+  if l:is_md && exists('*PushWikiIncludes')
     call PushWikiIncludes(l:cur, l:dir, expand('<afile>:t'))
   endif
 endfunction
@@ -557,14 +507,16 @@ augroup END
 set wildoptions=pum
 set wildcharm=<C-Z>
 function! s:MruBuffers(ArgLead, CmdLine, CursorPos) abort
-  let l:bufs = getbufinfo({'buflisted': 1})
-  call sort(l:bufs, {a, b -> b.lastused - a.lastused})
-  let l:names = map(l:bufs, {_, v -> fnamemodify(v.name, ':~:.')})
-  if !empty(a:ArgLead)
-    call filter(l:names, {_, v -> fnamemodify(v, ':t') =~? '^' . escape(a:ArgLead, '\.^$*[]~')})
-  endif
-  return l:names
+	let l:bufs = getbufinfo({'buflisted': 1})
+	call sort(l:bufs, {a, b -> b.lastused - a.lastused})
+	let l:names = map(l:bufs, {_, v -> fnamemodify(v.name, ':~:.')})
+	if !empty(a:ArgLead)
+		call filter(l:names, {_, v -> fnamemodify(v, ':t') =~? '^' . escape(a:ArgLead, '\.^$*[]~')})
+	endif
+	return l:names
 endfunction
 command! -nargs=1 -complete=customlist,s:MruBuffers B buffer <args>
-nnoremap <leader>b :B<Space>
+nnoremap <leader>b :ls<CR>:B<Space>
 nnoremap <leader>m :B<Space><C-Z>
+
+
