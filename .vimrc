@@ -27,19 +27,12 @@ endif
 call plug#begin('~/.vim/plugged')
 
 Plug 'scrooloose/nerdcommenter'
-Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
 Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
-"Plug '/usr/bin/fzf'
-"Plug 'vimwiki/vimwiki' 
 Plug 'mcchrish/nnn.vim'
 Plug 'scwood/vim-hybrid'
-"Plug 'https://gitlab.com/yorickpeterse/vim-paper.git'
-"Plug 'https://github.com/preservim/vim-pencil'
-Plug 'https://github.com/chrisbra/recover.vim'
 Plug 'justinmk/vim-sneak'
-"Plug 'romainl/vim-cool'
 
 call plug#end()
 
@@ -87,6 +80,7 @@ endif
 
 "wiki
 nnoremap <leader>ww :edit /home/think/OneDrive/Documents/notes/index.md<CR>
+let g:markdown_recommended_style = 0
 
 function! MakeMdLink(text) abort
   let path = expand('%:p:h') . '/' . a:text . '.md'
@@ -99,8 +93,19 @@ endfunction
 augroup MarkdownCustom
   autocmd!
   autocmd BufWritePre * call mkdir(expand('<afile>:p:h'), 'p')
+	" Syntax cleanup & Vimwiki-style concealed/colored links
   autocmd Syntax markdown silent! syntax clear
         \ htmlTag htmlEndTag htmlError markdownError markdownAutomaticLink
+  autocmd Syntax markdown syntax region markdownLinkText
+        \ matchgroup=markdownLinkDelimiter start="!\=\[" end="\]"
+        \ contains=@Spell nextgroup=markdownLink,markdownId skipwhite
+  autocmd Syntax markdown syntax region markdownLink
+        \ matchgroup=markdownLinkDelimiter start="(" end=")"
+        \ contained conceal
+  autocmd Syntax markdown highlight markdownLinkText guifg=#005faf ctermfg=25
+        \ gui=underline cterm=underline
+	" Conceal level, note paths & <leader>g link creation
+  autocmd FileType markdown setlocal conceallevel=2 concealcursor=nc
   autocmd FileType markdown setlocal path=.,** suffixesadd+=.md isfname-=(,),[,]
   autocmd FileType markdown nnoremap <buffer> <expr> <leader>g
         \ 'ciw' . MakeMdLink(expand('<cword>')) . "\<Esc>h"
