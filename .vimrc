@@ -97,8 +97,8 @@ augroup MarkdownCustom
   autocmd Syntax markdown silent! syntax clear
         \ htmlTag htmlEndTag htmlError markdownError markdownAutomaticLink
   autocmd Syntax markdown syntax region markdownLinkText
-        \ matchgroup=markdownLinkDelimiter start="!\=\[" end="\]"
-        \ contains=@Spell nextgroup=markdownLink,markdownId skipwhite
+        \ matchgroup=markdownLinkDelimiter start="!\=\[\ze[^\]]\+\](" end="\]\ze("
+        \ contains=@Spell nextgroup=markdownLink skipwhite
   autocmd Syntax markdown syntax region markdownLink
         \ matchgroup=markdownLinkDelimiter start="(" end=")"
         \ contained conceal
