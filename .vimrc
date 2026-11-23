@@ -207,6 +207,8 @@ nnoremap <Leader>r mayap}p`a
 nnoremap <Leader>R mayapGo<Esc>p`a
 nnoremap Y ,
 nnoremap Q 1z=
+"nnoremap <silent> <leader>h :lvimgrep /^#\+/ %<CR>
+nnoremap <silent> <leader>h :lvimgrep /^#\+/ % <bar> lopen<CR>
 
 function! VoicePaste()
   let l:clip = getreg('+') != '' ? getreg('+') : getreg('*')
@@ -376,19 +378,22 @@ xnoremap Z :call ZigZagInvertSelection()<CR>
 "endfunction
 "vnoremap <silent> <Leader>z :call ZigZagInvertSelection()<CR>
 
-"traverse buffers cronologically
-function! SmoothBufJump(dir)
-    let [b:winview, l:jumps, l:curr] = [winsaveview(), getjumplist()[0], getjumplist()[1]]
-    let l:step = a:dir == 'H' ? -1 : 1
-    let l:idx = l:curr + l:step
-    while l:idx >= 0 && l:idx < len(l:jumps)
-        if l:jumps[l:idx].bufnr != bufnr('%') && bufexists(l:jumps[l:idx].bufnr)
-            execute "normal! " . abs(l:idx - l:curr) . (a:dir == 'H' ? "\<C-o>" : "\<C-i>")
-            if exists('b:winview') | call winrestview(b:winview) | endif
-            return
-        endif
-        let l:idx += l:step
-    endwhile
+"smoothbuffer traverse
+let [s:mru, s:idx] = [[bufnr('%')], 0]
+augroup SmoothMru
+    autocmd!
+    autocmd BufEnter * if !get(g:, 'mru_lock') && buflisted(bufnr('%'))
+        \ | let [s:mru, s:idx] = [[bufnr('%')] + filter(s:mru, 'v:val != bufnr("%")'), 0] | endif
+    autocmd BufDelete * call filter(s:mru, 'v:val != expand("<abuf>")')
+augroup END
+function! SmoothBufJump(dir) abort
+    let l:next = s:idx + (a:dir ==# 'H' ? 1 : -1)
+    if l:next >= 0 && l:next < len(s:mru)
+        let [s:idx, g:mru_lock, b:winview] = [l:next, 1, winsaveview()]
+        silent execute 'buffer ' . s:mru[s:idx]
+        if exists('b:winview') | call winrestview(b:winview) | endif
+        unlet g:mru_lock
+    endif
 endfunction
 nnoremap <silent> H :call SmoothBufJump('H')<CR>
 nnoremap <silent> L :call SmoothBufJump('L')<CR>
@@ -482,31 +487,6 @@ augroup FixOneDrive
   autocmd!
   autocmd BufWriteCmd ~/OneDrive/* call WriteOneDriveFile()
 augroup END
-
-""fast list ordered
-"function! s:MruBuffers(ArgLead, CmdLine, CursorPos) abort
-	"let l:bufs = getbufinfo({'buflisted': 1})
-	"call sort(l:bufs, {a, b -> b.lastused - a.lastused})
-	"return map(l:bufs, {_, v -> fnamemodify(v.name, ':~:.')})
-"endfunction
-"command! -nargs=1 -complete=customlist,s:MruBuffers B buffer <args>
-"set wildcharm=<C-Z>
-"set wildoptions=pum
-"nnoremap <leader>b :B<Space><C-Z>
-
-""with entry for match
-"set wildoptions=pum
-"function! s:MruBuffers(ArgLead, CmdLine, CursorPos) abort
-	"let l:bufs = getbufinfo({'buflisted': 1})
-	"call sort(l:bufs, {a, b -> b.lastused - a.lastused})
-	"let l:names = map(l:bufs, {_, v -> fnamemodify(v.name, ':~:.')})
-	"if !empty(a:ArgLead)
-		"call filter(l:names, {_, v -> fnamemodify(v, ':t') =~? '^' . escape(a:ArgLead, '\.^$*[]~')})
-	"endif
-	"return l:names
-"endfunction
-"command! -nargs=1 -complete=customlist,s:MruBuffers B buffer <args>
-"nnoremap <leader>b :B<Space>
 
 "combined, 2 binds
 set wildoptions=pum
